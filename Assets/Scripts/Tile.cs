@@ -2,25 +2,25 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class Tile : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField] private int x;
+    [SerializeField] private int y;
+    
+    public void SetPosition(int xValue, int yValue)
     {
-        
+        x = xValue;
+        y = yValue;
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    public int GetX() => x;
+    public int GetY() => y;
+    
 
     #region TileAvailableCheck
     
     [SerializeField] private Color tileColor;
+
     public Color TileColor
     {
         get => tileColor;
@@ -43,16 +43,28 @@ public class Tile : MonoBehaviour
         return true;
     }
     
-    public void SetAvailable()
+    public void SetAvailableColor()
     {
         // set color to green
         GetComponent<SpriteRenderer>().color = Color.Lerp(Color.green, tileColor, 0.75f);
     }
     
-    public void SetUnavailable()
+    public void ResetColor()
     {
         // set color to gray
         GetComponent<SpriteRenderer>().color = tileColor;
+    }
+    
+    public void SetOccupiedColor()
+    {
+        // set color to red
+        GetComponent<SpriteRenderer>().color = Color.Lerp(Color.red, tileColor, 0.75f);
+    }
+    
+    public void SetSelectedColor()
+    {
+        // set color to blue
+        GetComponent<SpriteRenderer>().color = Color.Lerp(Color.blue, tileColor, 0.75f);
     }
     
     #endregion

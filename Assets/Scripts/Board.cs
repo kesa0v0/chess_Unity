@@ -51,12 +51,14 @@ public class Board : MonoBehaviour
         }
     }
     
+    #region TileRelated
+    
     public void CheckAvailableTiles()
     {
         foreach (var tilePair in _tiles)
         {
             if (tilePair.Value.IsPlaceAvailable())
-                tilePair.Value.SetAvailable();
+                tilePair.Value.SetAvailableColor();
         }
     }
     
@@ -64,7 +66,25 @@ public class Board : MonoBehaviour
     {
         foreach (var tilePair in _tiles)
         {
-            tilePair.Value.SetUnavailable();
+            tilePair.Value.ResetColor();
         }
     }
+
+    private Tile _beforeCursoredTile;
+    public void TintCursorOnTile(int x, int y)
+    {
+        // clear color of before cursored tile
+        if (_beforeCursoredTile != null)
+        {
+            if (_beforeCursoredTile.IsPlaceAvailable())
+                _beforeCursoredTile.SetAvailableColor();
+            else
+                _beforeCursoredTile.ResetColor();
+        }
+        
+        _tiles[y * 10 + x].SetSelectedColor();
+        _beforeCursoredTile = _tiles[y * 10 + x];
+    }
+    
+    #endregion
 }
