@@ -31,11 +31,12 @@ public class Piece : MonoBehaviour
         
         isDragging = true;
         _originalPosition = transform.position;
+        
+        transform.parent.GetComponent<Board>().CheckAvailableTiles();   // check available tiles and tint its color
     }
 
     private void OnMouseDrag()
     {
-        Debug.Log("mouseDrag");
         if (Camera.main is null) return;
 
 
@@ -48,6 +49,8 @@ public class Piece : MonoBehaviour
         Debug.Log("mouseUp");
         isDragging = false;
         transform.position = _originalPosition;
+        
+        transform.parent.GetComponent<Board>().ResetCheckTiles();   // reset color of available tiles
     }
     #endregion
 }

@@ -7,7 +7,7 @@ public class Board : MonoBehaviour
     [SerializeField] private Team currentTurn;
     
     [SerializeField] private Tile tile;
-    private readonly List<List<Tile>> _tiles = new();
+    private readonly Dictionary<int, Tile> _tiles = new();
 
     // Start is called before the first frame update
     private void Start()
@@ -15,14 +15,18 @@ public class Board : MonoBehaviour
         // Initialize Chess Tiles ( 8 x 8 )
         for (var i = 0; i < 8; i++) // vertical
         {
-            _tiles.Add(new List<Tile>());
-            
             for (var j = 0; j < 8; j++) // horizontal
             {
                 var temp = Instantiate(tile, this.transform);
                 temp.transform.transform.position = new Vector3(j, i, 5);
-                _tiles[i].Add(temp.GetComponent<Tile>());
-                temp.GetComponent<SpriteRenderer>().color = (j % 2 + i) % 2 == 1 ? Color.gray : new Color(0.8f, 0.8f, 0.8f);
+                _tiles.Add(i * 10 + j, temp.GetComponent<Tile>()); // 00 ~ 77, ABCDEFGH = 12345678
+                
+                temp.GetComponent<Tile>() // set tile color
+                    .TileColor = (j % 2 + i) % 2 == 1
+                    ? Color.gray
+                    : new Color(0.8f,
+                        0.8f,
+                        0.8f);
             }
         }
         
@@ -44,6 +48,23 @@ public class Board : MonoBehaviour
             default:
                 Debug.LogError("Turn is Unknown State.");
                 break;
+        }
+    }
+    
+    public void CheckAvailableTiles()
+    {
+        foreach (var tilePair in _tiles)
+        {
+            if (tilePair.Value.IsPlaceAvailable())
+                tilePair.Value.SetAvailable();
+        }
+    }
+    
+    public void ResetCheckTiles()
+    {
+        foreach (var tilePair in _tiles)
+        {
+            tilePair.Value.SetUnavailable();
         }
     }
 }
