@@ -2,5 +2,6 @@
 public enum Team
 {
     White,
-    Black
+    Black,
+    Unknown
 }
