@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class Piece : MonoBehaviour
@@ -25,7 +26,8 @@ public class Piece : MonoBehaviour
     [SerializeField] private bool isDragging = false;
     private Vector2 _originalPosition;
     private Vector2 _mouseClickPosition;
-    
+
+    private bool _isInBoard;
     private Vector2Int _draggingPosition;
     
     private void OnMouseDown()
@@ -60,18 +62,52 @@ public class Piece : MonoBehaviour
         _draggingPosition.y = Mathf.RoundToInt(mousePosition.y);
         
         // if x or y is out of range then ignore
-        if (_draggingPosition.x < 0 || _draggingPosition.x > 7 || _draggingPosition.y < 0 || _draggingPosition.y > 7) return;
+        if (_draggingPosition.x < 0 || _draggingPosition.x > 7 || _draggingPosition.y < 0 || _draggingPosition.y > 7)
+        {
+            _isInBoard = false;
+            return;
+        }
+        _isInBoard = true;
 
         _board.TintCursorOnTile(_draggingPosition.x, _draggingPosition.y);
     }
     
-    private void OnMouseUp()
+    private async void OnMouseUp()
     {
         Debug.Log("mouseUp");
-        isDragging = false;
-        transform.position = _originalPosition;
-        
-        _board.ResetCheckTiles();   // reset color of available tiles
+
+        if (isDragging)
+        {
+            isDragging = false;
+            if (DragMode()) return;
+            ResetPosition();
+        }
+        else
+        {
+            await SelectMode();
+        }
     }
+
+    private bool DragMode()
+    {
+        // if cursor is not in board, then ignore.
+        if (!_isInBoard) return false;
+        
+        // TODO: check if the tile is available to move and do it.
+
+        return true;
+    }
+
+    private async Task SelectMode()
+    {
+        // TODO: Waiting for User to select one of available tiles and move this to there.
+    }
+    
+    private void ResetPosition()
+    {
+        transform.position = _originalPosition;
+        _board.ResetCheckTiles();
+    }
+    
     #endregion
 }
