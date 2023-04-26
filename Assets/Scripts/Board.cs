@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class Board : MonoBehaviour
 {
+    [SerializeField] private Color brightTileColor;
+    [SerializeField] private Color darkTileColor;
+    
     [SerializeField] private Team currentTurn;
     
     [SerializeField] private Tile tile;
@@ -20,13 +23,11 @@ public class Board : MonoBehaviour
                 var temp = Instantiate(tile, this.transform);
                 temp.transform.transform.position = new Vector3(j, i, 5);
                 _tiles.Add(i * 10 + j, temp.GetComponent<Tile>()); // 00 ~ 77, ABCDEFGH = 12345678
-                
+
                 temp.GetComponent<Tile>() // set tile color
                     .TileColor = (j % 2 + i) % 2 == 1
-                    ? Color.gray
-                    : new Color(0.8f,
-                        0.8f,
-                        0.8f);
+                    ? darkTileColor
+                    : brightTileColor;
             }
         }
         
