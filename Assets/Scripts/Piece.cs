@@ -4,6 +4,19 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 
+public class MovableTiles
+{
+    public List<int> MovableTile = new();
+    public List<int> KillableTile = new();
+    
+    public void Add(MovableTiles other)
+    {
+        MovableTile.AddRange(other.MovableTile);
+        KillableTile.AddRange(other.KillableTile);
+    }
+}
+
+
 public abstract class Piece : MonoBehaviour
 {
     private Board _board;
@@ -19,8 +32,7 @@ public abstract class Piece : MonoBehaviour
         
     }
     
-    protected abstract List<int> GetAvailableTiles();
-
+    public abstract MovableTiles GetMovableTilesCode();
 
     #region MouseActions
     [Header("Mouse Actions")]
@@ -43,7 +55,7 @@ public abstract class Piece : MonoBehaviour
         _originalPosition = transform.position;
         _mouseClickPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         
-        _board.CheckAvailableTiles();   // check available tiles and tint its color
+        _board.CheckAvailableTiles(this);   // check available tiles and tint its color
     }
 
     private void OnMouseDrag()
@@ -70,50 +82,194 @@ public abstract class Piece : MonoBehaviour
             return;
         }
         _isInBoard = true;
-
-        _board.TintCursorOnTile(_draggingPosition.x, _draggingPosition.y);
+        
+        _board.TintCursorOnTile(_draggingPosition.x, _draggingPosition.y); // Tint Current Cursor Tile
     }
     
-    private async void OnMouseUp()
+    private void OnMouseUp()
     {
         Debug.Log("mouseUp");
-
         if (isDragging)
         {
-            isDragging = false;
-            if (DragMode()) return;
+            DragMode();
         }
         else
         {
-            await SelectMode();
+            ClickMode();
         }
     }
 
-    private bool DragMode()
+    private void DragMode()
     {
-        // if cursor is not in board, then ignore.
-        if (!_isInBoard) return false;
+        if (!_isInBoard)
+        {
+            ResetPosition();
+            return;
+        }
         
-        // TODO: check if the tile is available to move and do it.
-
-        ResetPosition();
-        return true;
     }
 
-    private async Task SelectMode()
+    private void ClickMode()
     {
-        // TODO: Waiting for User to select one of available tiles and move this to there.
         
-        await Task.Delay(5000);
-
         ResetPosition();
     }
-    
+
     private void ResetPosition()
     {
         transform.position = _originalPosition;
         _board.ResetCheckTiles();
     }
     
+    #endregion
+
+    #region MovementCalculation
+
+    public MovableTiles HorizontalMovement()
+    {
+        var movableTiles = new MovableTiles();
+        var position = transform.position;
+        var currentX = Mathf.RoundToInt(position.x);
+        var currentY = Mathf.RoundToInt(position.y);
+        
+        // left movement
+        for (var x = 0; x < 8; x++)
+        {
+            // board border check
+            if (currentX - x < 1) break;
+            // blocking piece check
+            if (_board.IsPieceOnTile(currentY * 10 + (currentX - x)))
+            {
+                movableTiles.KillableTile.Add(currentY * 10 + (currentX - x));
+                break;
+            }
+            
+            movableTiles.MovableTile.Add(currentY * 10 + (currentX - x));
+        }
+        // right movement
+        for (var x = 0; x < 8; x++)
+        {
+            // board border check
+            if (currentX + x > 8) break;
+            // blocking piece check
+            if (_board.IsPieceOnTile(currentY * 10 + (currentX - x)))
+            {
+                movableTiles.KillableTile.Add(currentY * 10 + (currentX - x));
+                break;
+            }
+            
+            movableTiles.MovableTile.Add(currentY * 10 + (currentX - x));
+        }
+
+        return movableTiles;
+    }
+
+    public MovableTiles VerticalMovement()
+    {
+        var movableTiles = new MovableTiles();
+        var position = transform.position;
+        var currentX = Mathf.RoundToInt(position.x);
+        var currentY = Mathf.RoundToInt(position.y);
+        
+        // up movement
+        for (var y = 0; y < 8; y++)
+        {
+            // board border check
+            if (currentY + y > 8) break;
+            // blocking piece check
+            if (_board.IsPieceOnTile((currentY + y) * 10 + currentX))
+            {
+                movableTiles.KillableTile.Add((currentY + y) * 10 + currentX);
+                break;
+            }
+            
+            movableTiles.MovableTile.Add((currentY + y) * 10 + currentX);
+        }
+        // down movement
+        for (var y = 0; y < 8; y++)
+        {
+            // board border check
+            if (currentY - y < 1) break;
+            // blocking piece check
+            if (_board.IsPieceOnTile((currentY - y) * 10 + currentX))
+            {
+                movableTiles.KillableTile.Add((currentY - y) * 10 + currentX);
+                break;
+            }
+            
+            movableTiles.MovableTile.Add((currentY - y) * 10 + currentX);
+        }
+
+
+        return movableTiles;
+    }
+    
+    public MovableTiles DiagonalMovement()
+    {
+        var movableTiles = new MovableTiles();
+        var position = transform.position;
+        var currentX = Mathf.RoundToInt(position.x);
+        var currentY = Mathf.RoundToInt(position.y);
+        
+        // left-up diagonal movement
+        for (var i = 1; i < 8; i++)
+        {
+            // board border check
+            if (currentX - i < 1 || currentY + i > 8) break;
+            // blocking piece check
+            if (_board.IsPieceOnTile((currentY + i) * 10 + currentX - i))
+            {
+                movableTiles.KillableTile.Add((currentY + i) * 10 + currentX - i);
+                break;
+            }
+            
+            movableTiles.MovableTile.Add((currentY + i) * 10 + currentX - i);
+        }
+        // left-down diagonal movement
+        for (var i = 1; i < 8; i++)
+        {
+            // board border check
+            if (currentX - i < 1 || currentY - i < 1) break;
+            // blocking piece check
+            if (_board.IsPieceOnTile((currentY - i) * 10 + currentX - i))
+            {
+                movableTiles.KillableTile.Add((currentY - i) * 10 + currentX - i);
+                break;
+            }
+            
+            movableTiles.MovableTile.Add((currentY - i) * 10 + currentX - i);
+        }
+        // right-up diagonal movement
+        for (var i = 1; i < 8; i++)
+        {
+            // board border check
+            if (currentX + i > 8 || currentY + i > 8) break;
+            // blocking piece check
+            if (_board.IsPieceOnTile((currentY + i) * 10 + currentX + i))
+            {
+                movableTiles.KillableTile.Add((currentY + i) * 10 + currentX + i);
+                break;
+            }
+            
+            movableTiles.MovableTile.Add((currentY + i) * 10 + currentX + i);
+        }
+        // right-down diagonal movement
+        for (var i = 1; i < 8; i++)
+        {
+            // board border check
+            if (currentX + i > 8 || currentY - i < 1) break;
+            // blocking piece check
+            if (_board.IsPieceOnTile((currentY - i) * 10 + currentX + i))
+            {
+                movableTiles.KillableTile.Add((currentY - i) * 10 + currentX + i);
+                break;
+            }
+            
+            movableTiles.MovableTile.Add((currentY - i) * 10 + currentX + i);
+        }
+
+        return movableTiles;
+    }
+
     #endregion
 }

@@ -2,6 +2,15 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
+
+public enum MoveMode  // MoveMode + TintMode
+{
+    Available,
+    Killable,
+    Selected,
+    None
+}
 
 public class Tile : MonoBehaviour
 {
@@ -11,7 +20,9 @@ public class Tile : MonoBehaviour
     [SerializeField] private int y;
 
     public bool isOccupied;
-    public bool isAvailable;
+    public bool isPieceAvailable;
+    public MoveMode moveMode = MoveMode.None;
+    public MoveMode tintMode = MoveMode.None;
 
     private void Start()
     {
@@ -42,47 +53,58 @@ public class Tile : MonoBehaviour
         }
     }
 
-    public bool IsPlaceAvailable()
-    {
-        // if already occupied?
-        if (isOccupied) return false;
-        
-        // if not occupied, is it available?
-        if (false) return false;
-        
-        // then ok!
-        return true;
-    }
-
     private void OnMouseDown()
     {
-        if (!isAvailable) return; // TODO: Show "Not Available" Floating Text
+        if (moveMode == MoveMode.None) return; // TODO: Show "Not Available" Floating Text
+        
+        
         
         _board.MovePieceTo(this);
     }
 
-    public void SetAvailableColor()
+    private void SetAvailableColor()
     {
         // set color to green
         GetComponent<SpriteRenderer>().color = Color.Lerp(Color.green, tileColor, 0.75f);
     }
     
-    public void ResetColor()
+    private void ResetColor()
     {
         // set color to gray
         GetComponent<SpriteRenderer>().color = tileColor;
     }
     
-    public void SetOccupiedColor()
+    private void SetOccupiedColor()
     {
         // set color to red
         GetComponent<SpriteRenderer>().color = Color.Lerp(Color.red, tileColor, 0.75f);
     }
     
-    public void SetSelectedColor()
+    private void SetSelectedColor()
     {
         // set color to blue
         GetComponent<SpriteRenderer>().color = Color.Lerp(Color.blue, tileColor, 0.75f);
+    }
+
+    public void TintUpdate()
+    {
+        switch (tintMode)
+        {
+            case MoveMode.Available:
+                SetAvailableColor();
+                break;
+            case MoveMode.Killable:
+                SetOccupiedColor();
+                break;
+            case MoveMode.Selected:
+                SetSelectedColor();
+                break;
+            case MoveMode.None:
+                ResetColor();
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(tintMode), tintMode, "tintMode is Unknown State.");
+        }
     }
     
     #endregion

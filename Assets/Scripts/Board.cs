@@ -1,6 +1,6 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class Board : MonoBehaviour
 {
@@ -9,7 +9,7 @@ public class Board : MonoBehaviour
     
     [SerializeField] private Team currentTurn;
     
-    [SerializeField] private Tile tile;
+    [FormerlySerializedAs("tile")] [SerializeField] private Tile tilePrefab;
     private readonly Dictionary<int, Tile> _tiles = new();
 
     // Start is called before the first frame update
@@ -20,7 +20,7 @@ public class Board : MonoBehaviour
         {
             for (var xValue = 0; xValue < 8; xValue++) // horizontal
             {
-                var temp = Instantiate(tile, this.transform);
+                var temp = Instantiate(tilePrefab, this.transform);
                 temp.transform.transform.position = new Vector3(xValue, yValue, 5);
                 _tiles.Add(yValue * 10 + xValue, temp.GetComponent<Tile>()); // 00 ~ 77
                 temp.SetPosition(xValue, yValue);
@@ -55,38 +55,55 @@ public class Board : MonoBehaviour
     
     #region TileRelated
     
-    public void CheckAvailableTiles()
+    public void CheckAvailableTiles(Piece piece)
     {
-        foreach (var tilePair in _tiles)
+        var movableTilesCodes = piece.GetMovableTilesCode();
+        foreach (var availableTile in movableTilesCodes.MovableTile)
         {
-            if (tilePair.Value.IsPlaceAvailable())
-                tilePair.Value.SetAvailableColor();
+            _tiles[availableTile].tintMode = MoveMode.Available;
+            _tiles[availableTile].TintUpdate();
         }
+        foreach (var killableTile in movableTilesCodes.KillableTile)
+        {
+            _tiles[killableTile].tintMode = MoveMode.Killable;
+            _tiles[killableTile].TintUpdate();
+        }
+        
+        
     }
     
     public void ResetCheckTiles()
     {
         foreach (var tilePair in _tiles)
         {
-            tilePair.Value.ResetColor();
+            tilePair.Value.moveMode = MoveMode.None;
+            tilePair.Value.TintUpdate();
         }
     }
 
     private Tile _beforeCursoredTile;
+    private MoveMode _beforeCursoredTileTintMode;
     public void TintCursorOnTile(int x, int y)
     {
         // clear color of before cursored tile
         if (_beforeCursoredTile != null)
         {
-            if (_beforeCursoredTile.IsPlaceAvailable())
-                _beforeCursoredTile.SetAvailableColor();
-            else
-                _beforeCursoredTile.ResetColor();
+            _beforeCursoredTile.tintMode = _beforeCursoredTileTintMode;
         }
         
-        _tiles[y * 10 + x].SetSelectedColor();
+        _tiles[y * 10 + x].TintUpdate();
         _beforeCursoredTile = _tiles[y * 10 + x];
     }
     
     #endregion
+
+    public void MovePieceTo(Tile toTile)
+    {
+        
+    }
+
+    public bool IsPieceOnTile(int pos)
+    {
+        return _tiles[pos].isOccupied;
+    }
 }
