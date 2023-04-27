@@ -16,16 +16,17 @@ public class Board : MonoBehaviour
     private void Start()
     {
         // Initialize Chess Tiles ( 8 x 8 )
-        for (var i = 0; i < 8; i++) // vertical
+        for (var yValue = 0; yValue < 8; yValue++) // vertical
         {
-            for (var j = 0; j < 8; j++) // horizontal
+            for (var xValue = 0; xValue < 8; xValue++) // horizontal
             {
                 var temp = Instantiate(tile, this.transform);
-                temp.transform.transform.position = new Vector3(j, i, 5);
-                _tiles.Add(i * 10 + j, temp.GetComponent<Tile>()); // 00 ~ 77, ABCDEFGH = 12345678
+                temp.transform.transform.position = new Vector3(xValue, yValue, 5);
+                _tiles.Add(yValue * 10 + xValue, temp.GetComponent<Tile>()); // 00 ~ 77
+                temp.SetPosition(xValue, yValue);
 
                 temp.GetComponent<Tile>() // set tile color
-                    .TileColor = (j % 2 + i) % 2 == 1
+                    .TileColor = (xValue % 2 + yValue) % 2 == 1
                     ? darkTileColor
                     : brightTileColor;
             }
