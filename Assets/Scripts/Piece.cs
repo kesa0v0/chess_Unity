@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public class Piece : MonoBehaviour
+public abstract class Piece : MonoBehaviour
 {
     private Board _board;
     // Start is called before the first frame update
-    void Start()
+    protected void Start()
     {
         _board = transform.parent.GetComponent<Board>();
     }
@@ -18,6 +18,8 @@ public class Piece : MonoBehaviour
     {
         
     }
+    
+    protected abstract List<int> GetAvailableTiles();
 
 
     #region MouseActions
