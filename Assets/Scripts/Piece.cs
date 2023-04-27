@@ -25,7 +25,7 @@ public abstract class Piece : MonoBehaviour
     #region MouseActions
     [Header("Mouse Actions")]
     
-    [SerializeField] private bool isDragging = false;
+    [SerializeField] private bool isDragging;
     private Vector2 _originalPosition;
     private Vector2 _mouseClickPosition;
 
@@ -97,12 +97,17 @@ public abstract class Piece : MonoBehaviour
         
         // TODO: check if the tile is available to move and do it.
 
+        ResetPosition();
         return true;
     }
 
     private async Task SelectMode()
     {
         // TODO: Waiting for User to select one of available tiles and move this to there.
+        
+        await Task.Delay(5000);
+
+        ResetPosition();
     }
     
     private void ResetPosition()
