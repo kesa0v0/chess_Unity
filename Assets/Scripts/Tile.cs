@@ -5,8 +5,19 @@ using UnityEngine;
 
 public class Tile : MonoBehaviour
 {
+    private Board _board;
+    
     [SerializeField] private int x;
     [SerializeField] private int y;
+
+    public bool isOccupied;
+    public bool isAvailable;
+
+    private void Start()
+    {
+        _board = transform.parent.GetComponent<Board>();
+    }
+
     
     public void SetPosition(int xValue, int yValue)
     {
@@ -34,7 +45,7 @@ public class Tile : MonoBehaviour
     public bool IsPlaceAvailable()
     {
         // if already occupied?
-        if (false) return false;
+        if (isOccupied) return false;
         
         // if not occupied, is it available?
         if (false) return false;
@@ -42,7 +53,14 @@ public class Tile : MonoBehaviour
         // then ok!
         return true;
     }
-    
+
+    private void OnMouseDown()
+    {
+        if (!isAvailable) return; // TODO: Show "Not Available" Floating Text
+        
+        _board.MovePieceTo(this);
+    }
+
     public void SetAvailableColor()
     {
         // set color to green
