@@ -82,7 +82,6 @@ public abstract class Piece : MonoBehaviour
         {
             isDragging = false;
             if (DragMode()) return;
-            ResetPosition();
         }
         else
         {
