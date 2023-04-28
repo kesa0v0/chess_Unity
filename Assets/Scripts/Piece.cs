@@ -140,10 +140,10 @@ public abstract class Piece : MonoBehaviour
         var currentY = Mathf.RoundToInt(position.y);
         
         // left movement
-        for (var x = 0; x < 8; x++)
+        for (var x = 1; x < 8; x++)
         {
             // board border check
-            if (currentX - x < 1) break;
+            if (currentX - x < 0) break;
             // blocking piece check
             if (_board.IsPieceOnTile(currentY * 10 + (currentX - x)))
             {
@@ -154,10 +154,10 @@ public abstract class Piece : MonoBehaviour
             movableTiles.MovableTile.Add(currentY * 10 + (currentX - x));
         }
         // right movement
-        for (var x = 0; x < 8; x++)
+        for (var x = 1; x < 8; x++)
         {
             // board border check
-            if (currentX + x > 8) break;
+            if (currentX + x > 7) break;
             // blocking piece check
             if (_board.IsPieceOnTile(currentY * 10 + (currentX + x)))
             {
@@ -179,10 +179,10 @@ public abstract class Piece : MonoBehaviour
         var currentY = Mathf.RoundToInt(position.y);
         
         // up movement
-        for (var y = 0; y < 8; y++)
+        for (var y = 1; y < 8; y++)
         {
             // board border check
-            if (currentY + y > 8) break;
+            if (currentY + y > 7) break;
             // blocking piece check
             if (_board.IsPieceOnTile((currentY + y) * 10 + currentX))
             {
@@ -193,10 +193,10 @@ public abstract class Piece : MonoBehaviour
             movableTiles.MovableTile.Add((currentY + y) * 10 + currentX);
         }
         // down movement
-        for (var y = 0; y < 8; y++)
+        for (var y = 1; y < 8; y++)
         {
             // board border check
-            if (currentY - y < 1) break;
+            if (currentY - y < 0) break;
             // blocking piece check
             if (_board.IsPieceOnTile((currentY - y) * 10 + currentX))
             {
@@ -222,7 +222,7 @@ public abstract class Piece : MonoBehaviour
         for (var i = 1; i < 8; i++)
         {
             // board border check
-            if (currentX - i < 1 || currentY + i > 8) break;
+            if (currentX - i < 0 || currentY + i > 7) break;
             // blocking piece check
             if (_board.IsPieceOnTile((currentY + i) * 10 + currentX - i))
             {
@@ -236,7 +236,7 @@ public abstract class Piece : MonoBehaviour
         for (var i = 1; i < 8; i++)
         {
             // board border check
-            if (currentX - i < 1 || currentY - i < 1) break;
+            if (currentX - i < 0 || currentY - i < 0) break;
             // blocking piece check
             if (_board.IsPieceOnTile((currentY - i) * 10 + currentX - i))
             {
@@ -250,7 +250,7 @@ public abstract class Piece : MonoBehaviour
         for (var i = 1; i < 8; i++)
         {
             // board border check
-            if (currentX + i > 8 || currentY + i > 8) break;
+            if (currentX + i > 7 || currentY + i > 7) break;
             // blocking piece check
             if (_board.IsPieceOnTile((currentY + i) * 10 + currentX + i))
             {
@@ -264,7 +264,7 @@ public abstract class Piece : MonoBehaviour
         for (var i = 1; i < 8; i++)
         {
             // board border check
-            if (currentX + i > 8 || currentY - i < 1) break;
+            if (currentX + i > 7 || currentY - i < 0) break;
             // blocking piece check
             if (_board.IsPieceOnTile((currentY - i) * 10 + currentX + i))
             {

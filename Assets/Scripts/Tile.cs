@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-public enum MoveMode  // MoveMode + TintMode
+public enum TintMode  // MoveMode + TintMode
 {
     Available,
     Killable,
@@ -21,8 +21,9 @@ public class Tile : MonoBehaviour
 
     public bool isOccupied;
     public bool isPieceAvailable;
-    public MoveMode moveMode = MoveMode.None;
-    public MoveMode tintMode = MoveMode.None;
+    
+    public Piece pieceOnTile;
+    public TintMode tintMode = TintMode.None;
 
     private void Start()
     {
@@ -55,11 +56,8 @@ public class Tile : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (moveMode == MoveMode.None) return; // TODO: Show "Not Available" Floating Text
         
         
-        
-        _board.MovePieceTo(this);
     }
 
     private void SetAvailableColor()
@@ -90,16 +88,16 @@ public class Tile : MonoBehaviour
     {
         switch (tintMode)
         {
-            case MoveMode.Available:
+            case TintMode.Available:
                 SetAvailableColor();
                 break;
-            case MoveMode.Killable:
+            case TintMode.Killable:
                 SetOccupiedColor();
                 break;
-            case MoveMode.Selected:
+            case TintMode.Selected:
                 SetSelectedColor();
                 break;
-            case MoveMode.None:
+            case TintMode.None:
                 ResetColor();
                 break;
             default:

@@ -4,9 +4,16 @@ using UnityEngine.Serialization;
 
 public class Board : MonoBehaviour
 {
+    [Header("BoardSettings")] 
+    public bool isBoardFlipped;
+
+    [SerializeField] private int tileSize = 1;
+    [SerializeField] private Vector2 anchorPosition;
+
     [SerializeField] private Color brightTileColor;
     [SerializeField] private Color darkTileColor;
     
+    [Header("Settings")]
     [SerializeField] private Team currentTurn;
     
     [SerializeField] private Tile tilePrefab;
@@ -60,12 +67,12 @@ public class Board : MonoBehaviour
         var movableTilesCodes = piece.movabletiles;
         foreach (var availableTile in movableTilesCodes.MovableTile)
         {
-            _tiles[availableTile].tintMode = MoveMode.Available;
+            _tiles[availableTile].tintMode = TintMode.Available;
             _tiles[availableTile].TintUpdate();
         }
         foreach (var killableTile in movableTilesCodes.KillableTile)
         {
-            _tiles[killableTile].tintMode = MoveMode.Killable;
+            _tiles[killableTile].tintMode = TintMode.Killable;
             _tiles[killableTile].TintUpdate();
         }
         
@@ -76,13 +83,13 @@ public class Board : MonoBehaviour
     {
         foreach (var tilePair in _tiles)
         {
-            tilePair.Value.moveMode = MoveMode.None;
+            tilePair.Value.tintMode = TintMode.None;
             tilePair.Value.TintUpdate();
         }
     }
 
     private Tile _beforeCursoredTile;
-    private MoveMode _beforeCursoredTileTintMode;
+    private TintMode _beforeCursoredTileTintMode;
     public void TintCursorOnTile(int x, int y)
     {
         // clear color of before cursored tile
@@ -98,7 +105,19 @@ public class Board : MonoBehaviour
     
     #endregion
 
-    public void MovePieceTo(Tile toTile)
+    #region PieceRelated
+
+    public void AddPiece<T>(Tile tile)
+    {
+        
+    }
+
+    public void RemovePiece(Piece piece)
+    {
+
+    }
+
+    public void MovePiece(Piece piece, Tile toTile)
     {
         
     }
@@ -108,4 +127,43 @@ public class Board : MonoBehaviour
         // return _tiles[pos].isOccupied;
         return false;
     }
+
+    #endregion
+
+    #region Transformer
+
+    public Tile GetTileFromPos(int pos)
+    {
+        return _tiles[pos];
+    }
+
+    public int GetPosFromCursor()
+    {
+        var pos = GetPosFromCursor(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+        return pos;
+    }
+    
+    public int GetPosFromCursor(Vector2 cursorPos)
+    {
+        var x = (int) cursorPos.x;
+        var y = (int) cursorPos.y;
+        return y * 10 + x;
+    }
+
+    public Piece GetPiece(int pos)
+    {
+        return _tiles[pos].pieceOnTile;
+    }
+
+    public Piece GetPiece(Tile tile)
+    {
+        return tile.pieceOnTile;
+    }
+
+    public IEnumerable<Piece> GetPieces<T>()
+    {
+        return null;    // TODO: Get kinds of Pieces
+    }
+    
+    #endregion
 }
