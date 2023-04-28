@@ -149,12 +149,6 @@ public class Board : MonoBehaviour
         toTile.pieceOnTile = piece;
     }
 
-    public bool IsPieceOnTile(int pos) // TODO: Move To GetPieceFromPos() because it can return null
-    {
-        // return _tiles[pos].isOccupied;
-        return false;
-    }
-
     #endregion
 
     #region Transformer
