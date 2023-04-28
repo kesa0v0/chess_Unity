@@ -80,7 +80,7 @@ public abstract class Piece : MonoBehaviour
             return;
         }
         _isInBoard = true;
-        
+
         _board.TintCursorOnTile(_draggingPosition.x, _draggingPosition.y); // Tint Current Cursor Tile
     }
     

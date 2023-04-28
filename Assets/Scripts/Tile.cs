@@ -39,7 +39,7 @@ public class Tile : MonoBehaviour
     public int GetY() => y;
     
 
-    #region TileAvailableCheck
+    #region TileTinting
     
     [SerializeField] private Color tileColor;
 
@@ -51,12 +51,6 @@ public class Tile : MonoBehaviour
             GetComponent<SpriteRenderer>().color = value;
             tileColor = value;
         }
-    }
-
-    private void OnMouseDown()
-    {
-        
-        
     }
 
     private void SetAvailableColor()
@@ -80,7 +74,7 @@ public class Tile : MonoBehaviour
     private void SetSelectedColor()
     {
         // set color to blue
-        GetComponent<SpriteRenderer>().color = Color.Lerp(Color.blue, tileColor, 0.75f);
+        GetComponent<SpriteRenderer>().color = Color.Lerp(Color.cyan, tileColor, 0.75f);
     }
 
     public void TintUpdate()

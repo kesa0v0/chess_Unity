@@ -82,8 +82,6 @@ public class Board : MonoBehaviour
             _tiles[killableTile].tintMode = TintMode.Killable;
             _tiles[killableTile].TintUpdate();
         }
-        
-        
     }
     
     public void ResetCheckTilesTint()
@@ -103,11 +101,16 @@ public class Board : MonoBehaviour
         if (_beforeCursoredTile != null)
         {
             _beforeCursoredTile.tintMode = _beforeCursoredTileTintMode;
+            _beforeCursoredTile.TintUpdate();
         }
         
-        _tiles[y * 10 + x].TintUpdate();
-        _beforeCursoredTile = _tiles[y * 10 + x];
-        _beforeCursoredTileTintMode = _beforeCursoredTile.tintMode;
+        // set color of current cursored tile
+        var tile = GetTileFromPos(10 * y + x);
+        _beforeCursoredTile = tile;
+        _beforeCursoredTileTintMode = tile.tintMode;
+        
+        tile.tintMode = TintMode.Selected;
+        tile.TintUpdate();
     }
     
     #endregion
@@ -141,7 +144,7 @@ public class Board : MonoBehaviour
         toTile.pieceOnTile = piece;
     }
 
-    public bool IsPieceOnTile(int pos)
+    public bool IsPieceOnTile(int pos) // TODO: Move To GetPieceFromPos() because it can return null
     {
         // return _tiles[pos].isOccupied;
         return false;
@@ -156,7 +159,7 @@ public class Board : MonoBehaviour
         return _tiles[pos];
     }
 
-    public int GetPosFromCursor()
+    public int GetPosFromCursor() // Effected By isFlipped
     {
         var pos = GetPosFromVec2(Camera.main!.ScreenToWorldPoint(Input.mousePosition));
         return pos;
