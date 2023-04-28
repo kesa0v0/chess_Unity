@@ -10,6 +10,8 @@ public class Board : MonoBehaviour
     [SerializeField] private int tileSize = 1;
     [SerializeField] private Vector2 anchorPosition;
 
+    [SerializeField] private SpriteRenderer boardSpriteRenderer;
+    [SerializeField] private Color boardColor;
     [SerializeField] private Color brightTileColor;
     [SerializeField] private Color darkTileColor;
     
@@ -24,6 +26,9 @@ public class Board : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
+        // Set Board Color
+        boardSpriteRenderer.color = boardColor;
+
         // Initialize Chess Tiles ( 8 x 8 )
         for (var yValue = 0; yValue < 8; yValue++) // vertical
         {
