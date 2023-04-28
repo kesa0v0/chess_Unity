@@ -1,14 +1,13 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Serialization;
 
+[Serializable]
 public class MovableTiles
 {
-    public readonly List<int> MovableTile = new();
-    public readonly List<int> KillableTile = new();
+    public List<int> MovableTile = new();
+    public List<int> KillableTile = new();
     
     public void Add(MovableTiles other)
     {
@@ -59,15 +58,17 @@ public abstract class Piece : MonoBehaviour
     {
         if (Camera.main is null) return;
 
+        Debug.Log("onMouseDown");
         if (isDragging) return;
         isDragging = false;
-        
+
         // onSelected
-        Movabletiles = GetMovableTilesCode();
+        movabletiles = GetMovableTilesCode();
 
         _originalPosition = transform.position;
         _mouseClickPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         
+        _board.ClearTintCursorHistory();
         _board.TintMovableTiles(this);   // check available tiles and tint its color
     }
 
@@ -127,14 +128,19 @@ public abstract class Piece : MonoBehaviour
             return;
         }
         
-        // Check is Movable tile
-        if (!Movabletiles.MovableTile.Contains(currentPos))
+        // Check is Movable/Killable tile
+        if (movabletiles.MovableTile.Contains(currentPos))
+        {
+            _board.MovePiece(this, _board.GetTileFromPos(currentPos));
+        }
+        else if (movabletiles.KillableTile.Contains(currentPos))
+        {
+            _board.KillPiece(this, _board.GetPiece(currentPos));
+        }
+        else
         {
             ResetPosition();
-            return;
         }
-        
-        _board.MovePiece(this, _board.GetTileFromPos(currentPos));
     }
 
     private void OnClicked()
@@ -154,7 +160,7 @@ public abstract class Piece : MonoBehaviour
 
     #region MovementCalculation
 
-    public MovableTiles Movabletiles;
+    public MovableTiles movabletiles;
     
     public MovableTiles HorizontalMovement()
     {

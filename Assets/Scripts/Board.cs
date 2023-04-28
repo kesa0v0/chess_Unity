@@ -75,7 +75,7 @@ public class Board : MonoBehaviour
     
     public void TintMovableTiles(Piece piece)
     {
-        var movableTilesCodes = piece.Movabletiles;
+        var movableTilesCodes = piece.movabletiles;
         foreach (var availableTile in movableTilesCodes.MovableTile)
         {
             _tiles[availableTile].tintMode = TintMode.Available;
@@ -99,6 +99,13 @@ public class Board : MonoBehaviour
 
     private Tile _beforeCursoredTile;
     private TintMode _beforeCursoredTileTintMode;
+    
+    public void ClearTintCursorHistory()
+    {
+        _beforeCursoredTile = null;
+        _beforeCursoredTileTintMode = TintMode.None;
+    }
+    
     public void TintCursorOnTile(int x, int y)
     {
         // clear color of before cursored tile
@@ -144,9 +151,18 @@ public class Board : MonoBehaviour
         piece.transform.position = tempPos;
         
         if (piece.currentTile != null)
+        {
             piece.currentTile.pieceOnTile = null;
+        }
         piece.currentTile = toTile;
         toTile.pieceOnTile = piece;
+    }
+
+    public void KillPiece(Piece fromPiece, Piece toPiece)
+    {
+        var toPieceTile = toPiece.currentTile;
+        RemovePiece(toPiece);
+        MovePiece(fromPiece, toPieceTile);
     }
 
     #endregion
