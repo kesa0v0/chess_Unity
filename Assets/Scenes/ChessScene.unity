@@ -259,6 +259,8 @@ MonoBehaviour:
   darkTileColor: {r: 0.4431373, g: 0.5529412, b: 0.32156864, a: 1}
   currentTurn: 0
   tilePrefab: {fileID: 392640012445794515, guid: 9ad2b1d34e13a0240a39613e2ed8506a, type: 3}
+  piecePrefabs:
+  - {fileID: 4903137588479866538, guid: ca0ff5d94505e22498805fcc06e66d69, type: 3}
 --- !u!1 &1046554836
 GameObject:
   m_ObjectHideFlags: 0

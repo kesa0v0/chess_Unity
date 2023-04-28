@@ -16,22 +16,18 @@ public class MovableTiles
     }
 }
 
-
+[Serializable]
 public abstract class Piece : MonoBehaviour
 {
     private Board _board;
+    public Tile currentTile;
+    
     // Start is called before the first frame update
     protected void Start()
     {
         _board = transform.parent.GetComponent<Board>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-    
     public abstract MovableTiles GetMovableTilesCode();
 
     #region MouseActions

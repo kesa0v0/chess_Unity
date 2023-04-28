@@ -19,6 +19,8 @@ public class Board : MonoBehaviour
     [SerializeField] private Tile tilePrefab;
     private readonly Dictionary<int, Tile> _tiles = new();
 
+    [SerializeField] private List<Piece> piecePrefabs;
+
     // Start is called before the first frame update
     private void Start()
     {
@@ -41,6 +43,11 @@ public class Board : MonoBehaviour
         
         // Set Turns who moves first
         currentTurn = Team.White;
+        
+        
+        // DEBUG
+        // Set Pieces
+        AddPiece<Pawn>(GetTileFromPos(44));
     }
     
     public void TurnOver()
@@ -107,19 +114,31 @@ public class Board : MonoBehaviour
 
     #region PieceRelated
 
-    public void AddPiece<T>(Tile tile)
+    public void AddPiece<T>(Tile tile) where T: Piece
     {
+        var typeOfPiece = piecePrefabs.Find(p => p.GetType() == typeof(T));
+        var piece = Instantiate(typeOfPiece, transform);
         
+        MovePiece(piece, tile);
     }
 
     public void RemovePiece(Piece piece)
     {
-
+        piece.currentTile.pieceOnTile = null;
+        
+        Destroy(piece.gameObject);
     }
 
     public void MovePiece(Piece piece, Tile toTile)
     {
+        var tempPos = toTile.transform.position;
+        tempPos.z += -5;
+        piece.transform.position = tempPos;
         
+        if (piece.currentTile != null)
+            piece.currentTile.pieceOnTile = null;
+        piece.currentTile = toTile;
+        toTile.pieceOnTile = piece;
     }
 
     public bool IsPieceOnTile(int pos)
