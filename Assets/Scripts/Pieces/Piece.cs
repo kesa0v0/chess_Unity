@@ -151,10 +151,12 @@ public abstract class Piece : MonoBehaviour
         if (movabletiles.MovableTile.Contains(currentPos))
         {
             Board.MovePiece(this, Board.GetTileFromPos(currentPos));
+            Board.TurnOver();
         }
         else if (movabletiles.KillableTile.Contains(currentPos))
         {
             Board.KillPiece(this, Board.GetPiece(currentPos));
+            Board.TurnOver();
         }
         else
         {

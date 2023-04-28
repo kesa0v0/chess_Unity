@@ -47,9 +47,6 @@ public class King : Piece
             }
         }
 
-        // Log movablePos
-        Debug.Log(movablePos.Aggregate("", (current, p) => current + (p + " ")));
-
         if (movablePos.Count == 0)
             Board.RaiseCheckMate();
 

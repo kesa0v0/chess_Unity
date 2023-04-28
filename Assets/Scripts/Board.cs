@@ -7,6 +7,7 @@ public class Board : MonoBehaviour
     [Header("BoardSettings")] 
     public bool isBoardFlipped;
 
+    [SerializeField] private SpriteRenderer turnIndicatorSpriteRenderer;
     [SerializeField] private SpriteRenderer boardSpriteRenderer;
     [SerializeField] private Color boardColor;
     [SerializeField] private Color brightTileColor;
@@ -47,7 +48,7 @@ public class Board : MonoBehaviour
         
         // Set Turns who moves first
         currentTurn = Team.White;
-        
+        turnIndicatorSpriteRenderer.color = Color.white;
         
         // DEBUG
         // Set Pieces
@@ -93,9 +94,11 @@ public class Board : MonoBehaviour
         {
             case Team.White:
                 currentTurn = Team.Black;
+                turnIndicatorSpriteRenderer.color = Color.black;
                 break;
             case Team.Black:
                 currentTurn = Team.White;
+                turnIndicatorSpriteRenderer.color = Color.white;
                 break;
             case Team.Unknown:
             default:
@@ -191,7 +194,19 @@ public class Board : MonoBehaviour
     public void RemovePiece(Piece piece)
     {
         piece.currentTile.pieceOnTile = null;
-        
+        switch (piece.Team)
+        {
+            case Team.White:
+                _whitePieces.Remove(piece);
+                break;
+            case Team.Black:
+                _blackPieces.Remove(piece);
+                break;
+            case Team.Unknown:
+            default:
+                Debug.LogError("Team is Unknown State.");
+                break;
+        }
         Destroy(piece.gameObject);
     }
 
