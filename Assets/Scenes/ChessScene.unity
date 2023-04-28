@@ -256,7 +256,7 @@ MonoBehaviour:
   brightTileColor: {r: 0.8745099, g: 0.87843144, b: 0.7725491, a: 1}
   darkTileColor: {r: 0.4431373, g: 0.5529412, b: 0.32156864, a: 1}
   currentTurn: 0
-  tile: {fileID: 392640012445794515, guid: 9ad2b1d34e13a0240a39613e2ed8506a, type: 3}
+  tilePrefab: {fileID: 392640012445794515, guid: 9ad2b1d34e13a0240a39613e2ed8506a, type: 3}
 --- !u!1 &1046554836
 GameObject:
   m_ObjectHideFlags: 0
@@ -801,11 +801,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6048431738371941011, guid: ca0ff5d94505e22498805fcc06e66d69, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6048431738371941011, guid: ca0ff5d94505e22498805fcc06e66d69, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 3.01
       objectReference: {fileID: 0}
     - target: {fileID: 6048431738371941011, guid: ca0ff5d94505e22498805fcc06e66d69, type: 3}
       propertyPath: m_LocalPosition.z
