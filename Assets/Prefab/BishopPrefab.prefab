@@ -98,8 +98,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51aa80b774fe39c4a8d9aa9401377d96, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  whiteSprite: {fileID: 21300000, guid: 3445fb67f0ac0b841b09c8510207b011, type: 3}
-  blackSprite: {fileID: 21300000, guid: dda0cf570ada4f94db5a6cd2fbbb5031, type: 3}
+  whiteSprite: {fileID: 935648586, guid: 8141db2a90fecb242b8add5c4f05e3aa, type: 3}
+  blackSprite: {fileID: -1368713818, guid: 8141db2a90fecb242b8add5c4f05e3aa, type: 3}
   currentTile: {fileID: 0}
   isFirstMove: 1
   isDragging: 0

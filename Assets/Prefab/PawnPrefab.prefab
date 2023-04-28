@@ -98,10 +98,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74877f30a171cee4e81bd42f6bbc4752, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  whiteSprite: {fileID: 21300000, guid: 3445fb67f0ac0b841b09c8510207b011, type: 3}
-  blackSprite: {fileID: 21300000, guid: dda0cf570ada4f94db5a6cd2fbbb5031, type: 3}
+  whiteSprite: {fileID: -1003632500, guid: 8141db2a90fecb242b8add5c4f05e3aa, type: 3}
+  blackSprite: {fileID: -1432395071, guid: 8141db2a90fecb242b8add5c4f05e3aa, type: 3}
   currentTile: {fileID: 0}
+  isFirstMove: 1
   isDragging: 0
+  movabletiles:
+    MovableTile: 
+    KillableTile: 
 --- !u!61 &1983848880102018298
 BoxCollider2D:
   m_ObjectHideFlags: 0
