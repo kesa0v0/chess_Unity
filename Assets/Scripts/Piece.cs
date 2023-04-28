@@ -106,6 +106,7 @@ public abstract class Piece : MonoBehaviour
         if (isDragging)
         {
             OnDragEnd();
+            _board.ResetCheckTilesTint();
         }
         else
         {
@@ -113,7 +114,6 @@ public abstract class Piece : MonoBehaviour
         }
 
         isDragging = false;
-        _board.ResetCheckTilesTint();
     }
 
     private void OnDragEnd()
@@ -140,7 +140,7 @@ public abstract class Piece : MonoBehaviour
     private void OnClicked()
     {
         
-        ResetPosition();
+        transform.position = _originalPosition;
     }
 
     private void ResetPosition()
