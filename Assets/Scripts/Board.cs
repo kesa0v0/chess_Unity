@@ -51,11 +51,35 @@ public class Board : MonoBehaviour
         
         // DEBUG
         // Set Pieces
-        AddPiece<Pawn>(GetTileFromPos(44), Team.White);
-        AddPiece<Pawn>(GetTileFromPos(24), Team.White);
-        AddPiece<Pawn>(GetTileFromPos(53), Team.Black);
+        InitPieceSet();
+    }
+
+    private void InitPieceSet()
+    {
+        for (var i = 0; i < 8; i++)
+        {
+            AddPiece<Pawn>(GetTileFromPos(10 + i), Team.White);
+            AddPiece<Pawn>(GetTileFromPos(60 + i), Team.Black);
+        }
         
-        AddPiece<King>(GetTileFromPos(34), Team.White);
+        AddPiece<Rook>(GetTileFromPos(00), Team.White);
+        AddPiece<Knight>(GetTileFromPos(01), Team.White);
+        AddPiece<Bishop>(GetTileFromPos(02), Team.White);
+        AddPiece<Queen>(GetTileFromPos(03), Team.White);
+        AddPiece<King>(GetTileFromPos(04), Team.White);
+        AddPiece<Bishop>(GetTileFromPos(05), Team.White);
+        AddPiece<Knight>(GetTileFromPos(06), Team.White);
+        AddPiece<Rook>(GetTileFromPos(07), Team.White);
+        
+        AddPiece<Rook>(GetTileFromPos(70), Team.Black);
+        AddPiece<Knight>(GetTileFromPos(71), Team.Black);
+        AddPiece<Bishop>(GetTileFromPos(72), Team.Black);
+        AddPiece<Queen>(GetTileFromPos(73), Team.Black);
+        AddPiece<King>(GetTileFromPos(74), Team.Black);
+        AddPiece<Bishop>(GetTileFromPos(75), Team.Black);
+        AddPiece<Knight>(GetTileFromPos(76), Team.Black);
+        AddPiece<Rook>(GetTileFromPos(77), Team.Black);
+        
     }
     
     public void TurnOver()
