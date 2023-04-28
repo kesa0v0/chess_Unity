@@ -1,18 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class Knight : MonoBehaviour
+public class Knight : Piece
 {
-    // Start is called before the first frame update
-    void Start()
+    public override MovableTiles GetMovableTilesCode()
     {
+        var movableTiles = new MovableTiles();
         
-    }
+        movableTiles.Add(HorizontalMovement());
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        return movableTiles;
     }
 }

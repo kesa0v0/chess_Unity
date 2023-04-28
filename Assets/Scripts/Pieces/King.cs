@@ -1,18 +1,31 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class King : MonoBehaviour
+public class King : Piece
 {
-    // Start is called before the first frame update
-    void Start()
+    public override MovableTiles GetMovableTilesCode()
     {
+        var movableTiles = new MovableTiles();
         
-    }
+        var pos = Board.GetPosFromVec2(transform.position);
+        
+        var movablePos = new[] {
+            pos + 10,
+            pos - 10,
+            pos + 1,
+            pos - 1,
+            pos + 11,
+            pos - 11,
+            pos + 9,
+            pos - 9
+        };
 
-    // Update is called once per frame
-    void Update()
-    {
+        foreach (var p in movablePos)
+        {
+            
+        }
         
+        // and kill enemy piece
+        movableTiles.AddKillable(pos + 10);
+        
+
+        return movableTiles;
     }
 }

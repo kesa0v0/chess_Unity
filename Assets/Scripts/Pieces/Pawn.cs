@@ -1,6 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
+using System;
 using UnityEngine;
 
 public class Pawn : Piece
@@ -8,18 +6,43 @@ public class Pawn : Piece
     public override MovableTiles GetMovableTilesCode()
     {
         // TileCode: YX (Y: Column, X: Row)
-        // TODO: Implement Pawn's Movable Tiles
-
-        // for test, return Queen's movable tiles
         
         var movableTiles = new MovableTiles();
 
-        var position = transform.position;
-        
-        movableTiles.Add(HorizontalMovement());
-        movableTiles.Add(VerticalMovement());
-        movableTiles.Add(DiagonalMovement());
+        var pos = Board.GetPosFromVec2(transform.position);
+
+        switch (Team)
+        {
+            case Team.White:
+            {
+                movableTiles.AddMovable(pos + 10);
+                if (isFirstMove)
+                    movableTiles.AddMovable(pos + 20);
+                break;
+            }
+            case Team.Black:
+            {
+                movableTiles.AddMovable(pos - 10);
+                if (isFirstMove)
+                    movableTiles.AddMovable(pos - 20);
+                break;
+            }
+            case Team.Unknown:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
 
         return movableTiles;
+    }
+
+    public void EnPassant()
+    {
+        
+    }
+    
+    public void Promotion()
+    {
+        
     }
 }

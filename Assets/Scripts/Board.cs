@@ -134,7 +134,11 @@ public class Board : MonoBehaviour
         var piece = Instantiate(typeOfPiece, transform);
         piece.Team = team;
         
-        MovePiece(piece, tile);
+        var tempPos = tile.transform.position;
+        tempPos.z = -10;
+        piece.transform.position = tempPos;
+        piece.currentTile = tile;
+        tile.pieceOnTile = piece;
     }
 
     public void RemovePiece(Piece piece)
@@ -150,12 +154,11 @@ public class Board : MonoBehaviour
         tempPos.z = -10;
         piece.transform.position = tempPos;
         
-        if (piece.currentTile != null)
-        {
-            piece.currentTile.pieceOnTile = null;
-        }
+        piece.currentTile.pieceOnTile = null;
         piece.currentTile = toTile;
         toTile.pieceOnTile = piece;
+
+        piece.isFirstMove = false;
     }
 
     public void KillPiece(Piece fromPiece, Piece toPiece)

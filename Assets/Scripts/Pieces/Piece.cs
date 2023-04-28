@@ -9,17 +9,29 @@ public class MovableTiles
     public List<int> MovableTile = new();
     public List<int> KillableTile = new();
     
+    // TODO: Event Special Movement (Castling, En Passant, Promotion)
+
     public void Add(MovableTiles other)
     {
         MovableTile.AddRange(other.MovableTile);
         KillableTile.AddRange(other.KillableTile);
+    }
+    
+    public void AddMovable(int tile)
+    {
+        MovableTile.Add(tile);
+    }
+    
+    public void AddKillable(int tile)
+    {
+        KillableTile.Add(tile);
     }
 }
 
 [Serializable]
 public abstract class Piece : MonoBehaviour
 {
-    private Board _board;
+    protected Board Board;
 
     [SerializeField] protected Sprite whiteSprite;
     [SerializeField] protected Sprite blackSprite;
@@ -36,10 +48,13 @@ public abstract class Piece : MonoBehaviour
     }
     public Tile currentTile;
     
+    public bool isFirstMove = true;
+
+    
     // Start is called before the first frame update
     protected void Start()
     {
-        _board = transform.parent.GetComponent<Board>();
+        Board = transform.parent.GetComponent<Board>();
     }
 
     public abstract MovableTiles GetMovableTilesCode();
@@ -68,8 +83,8 @@ public abstract class Piece : MonoBehaviour
         _originalPosition = transform.position;
         _mouseClickPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         
-        _board.ClearTintCursorHistory();
-        _board.TintMovableTiles(this);   // check available tiles and tint its color
+        Board.ClearTintCursorHistory();
+        Board.TintMovableTiles(this);   // check available tiles and tint its color
     }
 
     private void OnMouseDrag()
@@ -98,7 +113,7 @@ public abstract class Piece : MonoBehaviour
         }
         _isInBoard = true;
 
-        _board.TintCursorOnTile(_draggingPosition.x, _draggingPosition.y); // Tint Current Cursor Tile
+        Board.TintCursorOnTile(_draggingPosition.x, _draggingPosition.y); // Tint Current Cursor Tile
     }
     
     private void OnMouseUp()
@@ -107,7 +122,7 @@ public abstract class Piece : MonoBehaviour
         if (isDragging)
         {
             OnDragEnd();
-            _board.ResetCheckTilesTint();
+            Board.ResetCheckTilesTint();
         }
         else
         {
@@ -131,11 +146,11 @@ public abstract class Piece : MonoBehaviour
         // Check is Movable/Killable tile
         if (movabletiles.MovableTile.Contains(currentPos))
         {
-            _board.MovePiece(this, _board.GetTileFromPos(currentPos));
+            Board.MovePiece(this, Board.GetTileFromPos(currentPos));
         }
         else if (movabletiles.KillableTile.Contains(currentPos))
         {
-            _board.KillPiece(this, _board.GetPiece(currentPos));
+            Board.KillPiece(this, Board.GetPiece(currentPos));
         }
         else
         {
@@ -153,7 +168,7 @@ public abstract class Piece : MonoBehaviour
     {
         transform.position = _originalPosition;
         isDragging = false;
-        _board.ResetCheckTilesTint();
+        Board.ResetCheckTilesTint();
     }
     
     #endregion
@@ -176,9 +191,9 @@ public abstract class Piece : MonoBehaviour
             if (currentX - x < 0) break;
             // blocking piece check
             var pos = currentY * 10 + (currentX - x);
-            if (_board.GetPiece(pos))
+            if (Board.GetPiece(pos))
             {
-                if (_board.GetPiece(pos)._team != _team) movableTiles.KillableTile.Add(pos);
+                if (Board.GetPiece(pos).Team != Team) movableTiles.KillableTile.Add(pos);
                 break;
             }
             
@@ -191,9 +206,9 @@ public abstract class Piece : MonoBehaviour
             if (currentX + x > 7) break;
             // blocking piece check
             var pos = currentY * 10 + (currentX + x);
-            if (_board.GetPiece(pos))
+            if (Board.GetPiece(pos))
             {
-                if (_board.GetPiece(pos)._team != _team) movableTiles.KillableTile.Add(pos);
+                if (Board.GetPiece(pos).Team != Team) movableTiles.KillableTile.Add(pos);
                 break;
             }
             
@@ -217,9 +232,9 @@ public abstract class Piece : MonoBehaviour
             if (currentY + y > 7) break;
             // blocking piece check
             var pos = (currentY + y) * 10 + currentX;
-            if (_board.GetPiece(pos))
+            if (Board.GetPiece(pos))
             {
-                if (_board.GetPiece(pos)._team != _team) movableTiles.KillableTile.Add(pos);
+                if (Board.GetPiece(pos).Team != Team) movableTiles.KillableTile.Add(pos);
                 break;
             }
             
@@ -232,9 +247,9 @@ public abstract class Piece : MonoBehaviour
             if (currentY - y < 0) break;
             // blocking piece check
             var pos = (currentY - y) * 10 + currentX;
-            if (_board.GetPiece(pos))
+            if (Board.GetPiece(pos))
             {
-                if (_board.GetPiece(pos)._team != _team) movableTiles.KillableTile.Add(pos);
+                if (Board.GetPiece(pos).Team != Team) movableTiles.KillableTile.Add(pos);
                 break;
             }
             
@@ -259,9 +274,9 @@ public abstract class Piece : MonoBehaviour
             if (currentX - i < 0 || currentY + i > 7) break;
             // blocking piece check
             var pos = (currentY + i) * 10 + currentX - i;
-            if (_board.GetPiece(pos))
+            if (Board.GetPiece(pos))
             {
-                if (_board.GetPiece(pos)._team != _team) movableTiles.KillableTile.Add(pos);
+                if (Board.GetPiece(pos).Team != Team) movableTiles.KillableTile.Add(pos);
                 break;
             }
             
@@ -274,9 +289,9 @@ public abstract class Piece : MonoBehaviour
             if (currentX - i < 0 || currentY - i < 0) break;
             // blocking piece check
             var pos = (currentY - i) * 10 + currentX - i;
-            if (_board.GetPiece(pos))
+            if (Board.GetPiece(pos))
             {
-                if (_board.GetPiece(pos)._team != _team) movableTiles.KillableTile.Add(pos);
+                if (Board.GetPiece(pos).Team != Team) movableTiles.KillableTile.Add(pos);
                 break;
             }
             
@@ -289,9 +304,9 @@ public abstract class Piece : MonoBehaviour
             if (currentX + i > 7 || currentY + i > 7) break;
             // blocking piece check
             var pos = (currentY + i) * 10 + currentX + i;
-            if (_board.GetPiece(pos))
+            if (Board.GetPiece(pos))
             {
-                if (_board.GetPiece(pos)._team != _team) movableTiles.KillableTile.Add(pos);
+                if (Board.GetPiece(pos).Team != Team) movableTiles.KillableTile.Add(pos);
                 break;
             }
             
@@ -304,9 +319,9 @@ public abstract class Piece : MonoBehaviour
             if (currentX + i > 7 || currentY - i < 0) break;
             // blocking piece check
             var pos = (currentY - i) * 10 + currentX + i;
-            if (_board.GetPiece(pos))
+            if (Board.GetPiece(pos))
             {
-                if (_board.GetPiece(pos)._team != _team) movableTiles.KillableTile.Add(pos);
+                if (Board.GetPiece(pos).Team != Team) movableTiles.KillableTile.Add(pos);
                 break;
             }
             

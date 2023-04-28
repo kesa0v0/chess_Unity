@@ -1,18 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class Rook : MonoBehaviour
+public class Rook : Piece
 {
-    // Start is called before the first frame update
-    void Start()
+    public override MovableTiles GetMovableTilesCode()
     {
+        var movableTiles = new MovableTiles();
         
-    }
+        movableTiles.Add(HorizontalMovement());
+        movableTiles.Add(VerticalMovement());
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        return movableTiles;
     }
 }
