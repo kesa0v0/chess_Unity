@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class MovableTiles
 {
@@ -20,6 +21,20 @@ public class MovableTiles
 public abstract class Piece : MonoBehaviour
 {
     private Board _board;
+
+    [SerializeField] protected Sprite whiteSprite;
+    [SerializeField] protected Sprite blackSprite;
+    
+    private Team _team;
+    public Team Team
+    {
+        get => _team;
+        set
+        {
+            _team = value;
+            GetComponent<SpriteRenderer>().sprite = _team == Team.White ? whiteSprite : blackSprite;
+        }
+    }
     public Tile currentTile;
     
     // Start is called before the first frame update

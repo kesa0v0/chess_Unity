@@ -7,9 +7,6 @@ public class Board : MonoBehaviour
     [Header("BoardSettings")] 
     public bool isBoardFlipped;
 
-    [SerializeField] private int tileSize = 1;
-    [SerializeField] private Vector2 anchorPosition;
-
     [SerializeField] private SpriteRenderer boardSpriteRenderer;
     [SerializeField] private Color boardColor;
     [SerializeField] private Color brightTileColor;
@@ -52,7 +49,7 @@ public class Board : MonoBehaviour
         
         // DEBUG
         // Set Pieces
-        AddPiece<Pawn>(GetTileFromPos(44));
+        AddPiece<Pawn>(GetTileFromPos(44), Team.White);
     }
     
     public void TurnOver()
@@ -72,7 +69,7 @@ public class Board : MonoBehaviour
         }
     }
     
-    #region TileRelated
+    #region TileTintRelated
     
     public void TintMovableTiles(Piece piece)
     {
@@ -122,10 +119,11 @@ public class Board : MonoBehaviour
 
     #region PieceRelated
 
-    public void AddPiece<T>(Tile tile) where T: Piece
+    public void AddPiece<T>(Tile tile, Team team) where T: Piece
     {
         var typeOfPiece = piecePrefabs.Find(p => p.GetType() == typeof(T));
         var piece = Instantiate(typeOfPiece, transform);
+        piece.Team = team;
         
         MovePiece(piece, tile);
     }
