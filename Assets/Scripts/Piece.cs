@@ -63,7 +63,7 @@ public abstract class Piece : MonoBehaviour
         isDragging = false;
         
         // onSelected
-        movabletiles = GetMovableTilesCode();
+        Movabletiles = GetMovableTilesCode();
 
         _originalPosition = transform.position;
         _mouseClickPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -104,27 +104,39 @@ public abstract class Piece : MonoBehaviour
         Debug.Log("mouseUp");
         if (isDragging)
         {
-            onDragEnd();
+            OnDragEnd();
         }
         else
         {
-            onClicked();
+            OnClicked();
         }
-        
+
+        isDragging = false;
         _board.ResetCheckTilesTint();
     }
 
-    private void onDragEnd()
+    private void OnDragEnd()
     {
-        if (!_isInBoard || _board.GetPosFromCursor() == _board.GetPosFromVec2(_originalPosition))
+        var currentPos = Board.GetPosFromCursor();
+        
+        // Check in Board or Not Moved
+        if (!_isInBoard || Board.GetPosFromCursor() == Board.GetPosFromVec2(_originalPosition))
         {
             ResetPosition();
             return;
         }
         
+        // Check is Movable tile
+        if (!Movabletiles.MovableTile.Contains(currentPos))
+        {
+            ResetPosition();
+            return;
+        }
+        
+        _board.MovePiece(this, _board.GetTileFromPos(currentPos));
     }
 
-    private void onClicked()
+    private void OnClicked()
     {
         
         ResetPosition();
@@ -141,7 +153,7 @@ public abstract class Piece : MonoBehaviour
 
     #region MovementCalculation
 
-    public MovableTiles movabletiles;
+    public MovableTiles Movabletiles;
     
     public MovableTiles HorizontalMovement()
     {
@@ -156,13 +168,14 @@ public abstract class Piece : MonoBehaviour
             // board border check
             if (currentX - x < 0) break;
             // blocking piece check
-            if (_board.IsPieceOnTile(currentY * 10 + (currentX - x)))
+            var pos = currentY * 10 + (currentX - x);
+            if (_board.GetPiece(pos))
             {
-                movableTiles.KillableTile.Add(currentY * 10 + (currentX - x));
+                if (_board.GetPiece(pos)._team != _team) movableTiles.KillableTile.Add(pos);
                 break;
             }
             
-            movableTiles.MovableTile.Add(currentY * 10 + (currentX - x));
+            movableTiles.MovableTile.Add(pos);
         }
         // right movement
         for (var x = 1; x < 8; x++)
@@ -170,13 +183,14 @@ public abstract class Piece : MonoBehaviour
             // board border check
             if (currentX + x > 7) break;
             // blocking piece check
-            if (_board.IsPieceOnTile(currentY * 10 + (currentX + x)))
+            var pos = currentY * 10 + (currentX + x);
+            if (_board.GetPiece(pos))
             {
-                movableTiles.KillableTile.Add(currentY * 10 + (currentX + x));
+                if (_board.GetPiece(pos)._team != _team) movableTiles.KillableTile.Add(pos);
                 break;
             }
             
-            movableTiles.MovableTile.Add(currentY * 10 + (currentX + x));
+            movableTiles.MovableTile.Add(pos);
         }
 
         return movableTiles;
@@ -195,13 +209,14 @@ public abstract class Piece : MonoBehaviour
             // board border check
             if (currentY + y > 7) break;
             // blocking piece check
-            if (_board.IsPieceOnTile((currentY + y) * 10 + currentX))
+            var pos = (currentY + y) * 10 + currentX;
+            if (_board.GetPiece(pos))
             {
-                movableTiles.KillableTile.Add((currentY + y) * 10 + currentX);
+                if (_board.GetPiece(pos)._team != _team) movableTiles.KillableTile.Add(pos);
                 break;
             }
             
-            movableTiles.MovableTile.Add((currentY + y) * 10 + currentX);
+            movableTiles.MovableTile.Add(pos);
         }
         // down movement
         for (var y = 1; y < 8; y++)
@@ -209,13 +224,14 @@ public abstract class Piece : MonoBehaviour
             // board border check
             if (currentY - y < 0) break;
             // blocking piece check
-            if (_board.IsPieceOnTile((currentY - y) * 10 + currentX))
+            var pos = (currentY - y) * 10 + currentX;
+            if (_board.GetPiece(pos))
             {
-                movableTiles.KillableTile.Add((currentY - y) * 10 + currentX);
+                if (_board.GetPiece(pos)._team != _team) movableTiles.KillableTile.Add(pos);
                 break;
             }
             
-            movableTiles.MovableTile.Add((currentY - y) * 10 + currentX);
+            movableTiles.MovableTile.Add(pos);
         }
 
 
@@ -235,13 +251,14 @@ public abstract class Piece : MonoBehaviour
             // board border check
             if (currentX - i < 0 || currentY + i > 7) break;
             // blocking piece check
-            if (_board.IsPieceOnTile((currentY + i) * 10 + currentX - i))
+            var pos = (currentY + i) * 10 + currentX - i;
+            if (_board.GetPiece(pos))
             {
-                movableTiles.KillableTile.Add((currentY + i) * 10 + currentX - i);
+                if (_board.GetPiece(pos)._team != _team) movableTiles.KillableTile.Add(pos);
                 break;
             }
             
-            movableTiles.MovableTile.Add((currentY + i) * 10 + currentX - i);
+            movableTiles.MovableTile.Add(pos);
         }
         // left-down diagonal movement
         for (var i = 1; i < 8; i++)
@@ -249,13 +266,14 @@ public abstract class Piece : MonoBehaviour
             // board border check
             if (currentX - i < 0 || currentY - i < 0) break;
             // blocking piece check
-            if (_board.IsPieceOnTile((currentY - i) * 10 + currentX - i))
+            var pos = (currentY - i) * 10 + currentX - i;
+            if (_board.GetPiece(pos))
             {
-                movableTiles.KillableTile.Add((currentY - i) * 10 + currentX - i);
+                if (_board.GetPiece(pos)._team != _team) movableTiles.KillableTile.Add(pos);
                 break;
             }
             
-            movableTiles.MovableTile.Add((currentY - i) * 10 + currentX - i);
+            movableTiles.MovableTile.Add(pos);
         }
         // right-up diagonal movement
         for (var i = 1; i < 8; i++)
@@ -263,13 +281,14 @@ public abstract class Piece : MonoBehaviour
             // board border check
             if (currentX + i > 7 || currentY + i > 7) break;
             // blocking piece check
-            if (_board.IsPieceOnTile((currentY + i) * 10 + currentX + i))
+            var pos = (currentY + i) * 10 + currentX + i;
+            if (_board.GetPiece(pos))
             {
-                movableTiles.KillableTile.Add((currentY + i) * 10 + currentX + i);
+                if (_board.GetPiece(pos)._team != _team) movableTiles.KillableTile.Add(pos);
                 break;
             }
             
-            movableTiles.MovableTile.Add((currentY + i) * 10 + currentX + i);
+            movableTiles.MovableTile.Add(pos);
         }
         // right-down diagonal movement
         for (var i = 1; i < 8; i++)
@@ -277,13 +296,14 @@ public abstract class Piece : MonoBehaviour
             // board border check
             if (currentX + i > 7 || currentY - i < 0) break;
             // blocking piece check
-            if (_board.IsPieceOnTile((currentY - i) * 10 + currentX + i))
+            var pos = (currentY - i) * 10 + currentX + i;
+            if (_board.GetPiece(pos))
             {
-                movableTiles.KillableTile.Add((currentY - i) * 10 + currentX + i);
+                if (_board.GetPiece(pos)._team != _team) movableTiles.KillableTile.Add(pos);
                 break;
             }
             
-            movableTiles.MovableTile.Add((currentY - i) * 10 + currentX + i);
+            movableTiles.MovableTile.Add(pos);
         }
 
         return movableTiles;

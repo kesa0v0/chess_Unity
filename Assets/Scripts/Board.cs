@@ -50,6 +50,8 @@ public class Board : MonoBehaviour
         // DEBUG
         // Set Pieces
         AddPiece<Pawn>(GetTileFromPos(44), Team.White);
+        AddPiece<Pawn>(GetTileFromPos(24), Team.White);
+        AddPiece<Pawn>(GetTileFromPos(53), Team.Black);
     }
     
     public void TurnOver()
@@ -73,7 +75,7 @@ public class Board : MonoBehaviour
     
     public void TintMovableTiles(Piece piece)
     {
-        var movableTilesCodes = piece.movabletiles;
+        var movableTilesCodes = piece.Movabletiles;
         foreach (var availableTile in movableTilesCodes.MovableTile)
         {
             _tiles[availableTile].tintMode = TintMode.Available;
@@ -162,16 +164,16 @@ public class Board : MonoBehaviour
         return _tiles[pos];
     }
 
-    public int GetPosFromCursor() // Effected By isFlipped
+    public static int GetPosFromCursor() // Effected By isFlipped
     {
         var pos = GetPosFromVec2(Camera.main!.ScreenToWorldPoint(Input.mousePosition));
         return pos;
     }
     
-    public int GetPosFromVec2(Vector2 cursorPos)
+    public static int GetPosFromVec2(Vector2 cursorPos)
     {
-        var x = (int) cursorPos.x;
-        var y = (int) cursorPos.y;
+        var x = Mathf.RoundToInt(cursorPos.x);
+        var y = Mathf.RoundToInt(cursorPos.y);
         return y * 10 + x;
     }
 
