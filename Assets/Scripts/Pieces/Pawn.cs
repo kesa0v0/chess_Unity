@@ -15,15 +15,27 @@ public class Pawn : Piece
         {
             case Team.White:
             {
-                movableTiles.AddMovable(pos + 10);
-                if (isFirstMove)
+                if (Board.GetPiece(pos + 11) && Board.GetPiece(pos + 11).Team != Team)
+                    movableTiles.AddKillable(pos + 11);
+                if (Board.GetPiece(pos + 9) && Board.GetPiece(pos + 9).Team != Team)
+                    movableTiles.AddKillable(pos + 9);
+                
+                if (!Board.GetPiece(pos + 10))
+                    movableTiles.AddMovable(pos + 10);
+                if (isFirstMove && !Board.GetPiece(pos + 20))
                     movableTiles.AddMovable(pos + 20);
                 break;
             }
             case Team.Black:
             {
-                movableTiles.AddMovable(pos - 10);
-                if (isFirstMove)
+                if (Board.GetPiece(pos - 11) && Board.GetPiece(pos - 11).Team != Team)
+                    movableTiles.AddKillable(pos - 11);
+                if (Board.GetPiece(pos - 9) && Board.GetPiece(pos - 9).Team != Team)
+                    movableTiles.AddKillable(pos - 9);
+                
+                if (!Board.GetPiece(pos - 10))
+                    movableTiles.AddMovable(pos - 10);
+                if (isFirstMove && !Board.GetPiece(pos - 20))
                     movableTiles.AddMovable(pos - 20);
                 break;
             }

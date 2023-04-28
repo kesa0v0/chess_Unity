@@ -19,6 +19,8 @@ public class Board : MonoBehaviour
     private readonly Dictionary<int, Tile> _tiles = new();
 
     [SerializeField] private List<Piece> piecePrefabs;
+    private readonly List<Piece> _whitePieces = new();
+    private readonly List<Piece> _blackPieces = new();
 
     // Start is called before the first frame update
     private void Start()
@@ -139,6 +141,20 @@ public class Board : MonoBehaviour
         piece.transform.position = tempPos;
         piece.currentTile = tile;
         tile.pieceOnTile = piece;
+        
+        switch (team)
+        {
+            case Team.White:
+                _whitePieces.Add(piece);
+                break;
+            case Team.Black:
+                _blackPieces.Add(piece);
+                break;
+            case Team.Unknown:
+            default:
+                Debug.LogError("Team is Unknown State.");
+                break;
+        }
     }
 
     public void RemovePiece(Piece piece)
@@ -204,6 +220,66 @@ public class Board : MonoBehaviour
     {
         return null;    // TODO: Get kinds of Pieces
     }
+
+    public bool IsDangerZone(Tile tile, Team team)
+    {
+        var pieces = team == Team.White ? _blackPieces : _whitePieces;
+        
+        foreach (var piece in pieces)
+        {
+            switch (piece)
+            {
+                case King:
+                    var king = GetPosFromVec2(piece.transform.position);
+                    // King can't move to front of enemy's King
+                    var checkList = new List<int>
+                    {
+                        king + 10,
+                        king - 10,
+                        king + 1,
+                        king - 1,
+                        king + 11,
+                        king - 11,
+                        king + 9,
+                        king - 9
+                    };
+                    if (checkList.Contains(tile.GetPosition()))
+                    {
+                        return true;
+                    }
+                    break;
+                
+                case Pawn:
+                    var pawn = GetPosFromVec2(piece.transform.position);
+                    if (piece.Team == Team.White && pawn == tile.GetPosition() + 9 ||
+                        piece.Team == Team.White && pawn == tile.GetPosition() + 11 ||
+                        piece.Team == Team.Black && pawn == tile.GetPosition() - 9 ||
+                        piece.Team == Team.Black && pawn == tile.GetPosition() - 11)
+                    {
+                        return true;
+                    }
+                    break;
+                
+                default:
+                {
+                    var movable = piece.GetMovableTilesCode();
+                    if (movable.MovableTile.Contains(tile.GetPosition()))
+                    {
+                        return true;
+                    }
+
+                    break;
+                }
+            }
+        }
+
+        return false;
+    }
     
     #endregion
+
+    public void RaiseCheckMate()
+    {
+        throw new System.NotImplementedException();
+    }
 }

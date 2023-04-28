@@ -18,9 +18,6 @@ public class Tile : MonoBehaviour
     [SerializeField] private int x;
     [SerializeField] private int y;
 
-    public bool isOccupied;
-    public bool isPieceAvailable;
-    
     public Piece pieceOnTile;
     public TintMode tintMode = TintMode.None;
 
@@ -35,8 +32,11 @@ public class Tile : MonoBehaviour
         x = xValue;
         y = yValue;
     }
-    public int GetX() => x;
-    public int GetY() => y;
+
+    public int GetPosition()
+    {
+        return y * 10 + x;
+    }
     
 
     #region TileTinting
