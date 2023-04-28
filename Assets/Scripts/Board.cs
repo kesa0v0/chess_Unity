@@ -139,11 +139,11 @@ public class Board : MonoBehaviour
 
     public int GetPosFromCursor()
     {
-        var pos = GetPosFromCursor(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+        var pos = GetPosFromVec2(Camera.main!.ScreenToWorldPoint(Input.mousePosition));
         return pos;
     }
     
-    public int GetPosFromCursor(Vector2 cursorPos)
+    public int GetPosFromVec2(Vector2 cursorPos)
     {
         var x = (int) cursorPos.x;
         var y = (int) cursorPos.y;

@@ -67,7 +67,7 @@ public abstract class Piece : MonoBehaviour
         Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         
         // Make Small Movement is not count as Drag
-        if (!isDragging && Vector2.Distance(mousePosition, _mouseClickPosition) < 0.1f) return;
+        if (!isDragging && Vector2.Distance(mousePosition, _mouseClickPosition) < 0.095f) return;
 
         
         // on Dragging
@@ -105,7 +105,7 @@ public abstract class Piece : MonoBehaviour
 
     private void onDragEnd()
     {
-        if (!_isInBoard)
+        if (!_isInBoard || _board.GetPosFromCursor() == _board.GetPosFromVec2(_originalPosition))
         {
             ResetPosition();
             return;
