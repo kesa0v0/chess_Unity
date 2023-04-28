@@ -75,7 +75,7 @@ public abstract class Piece : MonoBehaviour
     {
         if (Camera.main is null) return;
         
-        Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        var mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         
         // Make Small Movement is not count as Drag
         if (!isDragging && Vector2.Distance(mousePosition, _mouseClickPosition) < 0.095f) return;
@@ -83,6 +83,7 @@ public abstract class Piece : MonoBehaviour
         
         // on Dragging
         isDragging = true;
+        mousePosition.z = -15;
         transform.position = mousePosition;
         
         _draggingPosition.x = Mathf.RoundToInt(mousePosition.x);

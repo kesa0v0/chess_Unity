@@ -140,7 +140,7 @@ public class Board : MonoBehaviour
     public void MovePiece(Piece piece, Tile toTile)
     {
         var tempPos = toTile.transform.position;
-        tempPos.z += -5;
+        tempPos.z = -10;
         piece.transform.position = tempPos;
         
         if (piece.currentTile != null)
