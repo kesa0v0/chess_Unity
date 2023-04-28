@@ -72,8 +72,9 @@ public abstract class Piece : MonoBehaviour
     private void OnMouseDown()
     {
         if (Camera.main is null) return;
+        
+        if (!Board.CheckTurn(this)) return;
 
-        Debug.Log("onMouseDown");
         if (isDragging) return;
         isDragging = false;
 
@@ -90,6 +91,8 @@ public abstract class Piece : MonoBehaviour
     private void OnMouseDrag()
     {
         if (Camera.main is null) return;
+        
+        if (!Board.CheckTurn(this)) return; 
         
         var mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         
@@ -118,7 +121,8 @@ public abstract class Piece : MonoBehaviour
     
     private void OnMouseUp()
     {
-        Debug.Log("mouseUp");
+        if (!Board.CheckTurn(this)) return;
+
         if (isDragging)
         {
             OnDragEnd();

@@ -12,15 +12,17 @@ public class Knight : Piece
         {
             pos + 21, pos + 19, pos + 12, pos + 8, pos - 21, pos - 19, pos - 12, pos - 8
         };
-        
-        foreach (var move in knightMove.Where(move => !Board.GetPiece(move) || Board.GetPiece(move).Team != Team))
+
+        foreach (var p in knightMove.Where(p => p % 10 >= 0 && p % 10 <= 7 && p / 10 >= 0 && p / 10 <= 7))
         {
-            if (Board.GetPiece(move) && Board.GetPiece(move).Team != Team)
+            if (!Board.GetPiece(p)) // if there is empty tile
             {
-                movableTiles.AddKillable(move);
-                continue;
+                movableTiles.AddMovable(p);
             }
-            movableTiles.AddMovable(move);
+            else if (Board.GetPiece(p) && Board.GetPiece(p).Team != Team) // if there is a enemy piece
+            {
+                movableTiles.AddKillable(p);
+            }
         }
 
         return movableTiles;

@@ -81,6 +81,11 @@ public class Board : MonoBehaviour
         AddPiece<Rook>(GetTileFromPos(77), Team.Black);
         
     }
+
+    public bool CheckTurn(Piece piece)
+    {
+        return piece != null && piece.Team == currentTurn;
+    }
     
     public void TurnOver()
     {

@@ -26,7 +26,11 @@ public class King : Piece
 
         foreach (var p in movablePosCopy)
         {
-            if (Board.IsDangerZone(Board.GetTileFromPos(p), Team)) // if it is danger zone, don't add
+            if (p % 10 < 0 || p % 10 > 7 || p / 10 < 0 || p / 10 > 7) // if it is out of board, don't add
+            {
+                movablePos.Remove(p);
+            }
+            else if (Board.IsDangerZone(Board.GetTileFromPos(p), Team)) // if it is danger zone, don't add
             {
                 movablePos.Remove(p);
             }
