@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
+using UnityEngine;
 
 public class King : Piece
 {
@@ -20,30 +22,20 @@ public class King : Piece
             pos + 9,
             pos - 9
         };
-        var checkList = new List<int>
-        {
-            pos + 10,
-            pos - 10,
-            pos + 1,
-            pos - 1,
-            pos + 11,
-            pos - 11,
-            pos + 9,
-            pos - 9
-        };
+        var movablePosCopy = new List<int>(movablePos);
 
-        foreach (var p in movablePos)
+        foreach (var p in movablePosCopy)
         {
             if (Board.IsDangerZone(Board.GetTileFromPos(p), Team)) // if it is danger zone, don't add
             {
-                checkList.Remove(p);
+                movablePos.Remove(p);
             }
             else if (Board.GetPiece(p)) // if there is a enemy piece
             {
                 if (Board.GetPiece(p).Team != Team)
                     movableTiles.AddKillable(p);
                 else
-                    checkList.Remove(p);
+                    movablePos.Remove(p);
             }
             else
             {
@@ -51,7 +43,10 @@ public class King : Piece
             }
         }
 
-        if (checkList.Count == 0)
+        // Log movablePos
+        Debug.Log(movablePos.Aggregate("", (current, p) => current + (p + " ")));
+
+        if (movablePos.Count == 0)
             Board.RaiseCheckMate();
 
 

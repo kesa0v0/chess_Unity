@@ -261,6 +261,11 @@ MonoBehaviour:
   tilePrefab: {fileID: 392640012445794515, guid: 9ad2b1d34e13a0240a39613e2ed8506a, type: 3}
   piecePrefabs:
   - {fileID: 4903137588479866538, guid: ca0ff5d94505e22498805fcc06e66d69, type: 3}
+  - {fileID: -8073792388456781915, guid: addd60bd513fbcd4db9a049bbbe96eaf, type: 3}
+  - {fileID: -5645388441618122051, guid: b9f8482971b5299478455d3cc08c046d, type: 3}
+  - {fileID: 8779585370935221226, guid: 43c46bd56b4349045886aa96f1cdd0b2, type: 3}
+  - {fileID: -5012046207314043199, guid: 41235de0bf3fb3343ac722cc50a5e23f, type: 3}
+  - {fileID: 607343598771090430, guid: 60e0031986a139c47ac2b804e1a4a239, type: 3}
 --- !u!1 &1046554836
 GameObject:
   m_ObjectHideFlags: 0

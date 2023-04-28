@@ -54,6 +54,8 @@ public class Board : MonoBehaviour
         AddPiece<Pawn>(GetTileFromPos(44), Team.White);
         AddPiece<Pawn>(GetTileFromPos(24), Team.White);
         AddPiece<Pawn>(GetTileFromPos(53), Team.Black);
+        
+        AddPiece<King>(GetTileFromPos(34), Team.White);
     }
     
     public void TurnOver()
@@ -251,10 +253,10 @@ public class Board : MonoBehaviour
                 
                 case Pawn:
                     var pawn = GetPosFromVec2(piece.transform.position);
-                    if (piece.Team == Team.White && pawn == tile.GetPosition() + 9 ||
-                        piece.Team == Team.White && pawn == tile.GetPosition() + 11 ||
-                        piece.Team == Team.Black && pawn == tile.GetPosition() - 9 ||
-                        piece.Team == Team.Black && pawn == tile.GetPosition() - 11)
+                    if (piece.Team == Team.White && pawn == tile.GetPosition() - 9 ||
+                        piece.Team == Team.White && pawn == tile.GetPosition() - 11 ||
+                        piece.Team == Team.Black && pawn == tile.GetPosition() + 9 ||
+                        piece.Team == Team.Black && pawn == tile.GetPosition() + 11)
                     {
                         return true;
                     }
