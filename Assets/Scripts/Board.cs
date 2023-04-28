@@ -9,7 +9,7 @@ public class Board : MonoBehaviour
     
     [SerializeField] private Team currentTurn;
     
-    [FormerlySerializedAs("tile")] [SerializeField] private Tile tilePrefab;
+    [SerializeField] private Tile tilePrefab;
     private readonly Dictionary<int, Tile> _tiles = new();
 
     // Start is called before the first frame update
@@ -55,9 +55,9 @@ public class Board : MonoBehaviour
     
     #region TileRelated
     
-    public void CheckAvailableTiles(Piece piece)
+    public void TintMovableTiles(Piece piece)
     {
-        var movableTilesCodes = piece.GetMovableTilesCode();
+        var movableTilesCodes = piece.movabletiles;
         foreach (var availableTile in movableTilesCodes.MovableTile)
         {
             _tiles[availableTile].tintMode = MoveMode.Available;
@@ -72,7 +72,7 @@ public class Board : MonoBehaviour
         
     }
     
-    public void ResetCheckTiles()
+    public void ResetCheckTilesTint()
     {
         foreach (var tilePair in _tiles)
         {
@@ -93,6 +93,7 @@ public class Board : MonoBehaviour
         
         _tiles[y * 10 + x].TintUpdate();
         _beforeCursoredTile = _tiles[y * 10 + x];
+        _beforeCursoredTileTintMode = _beforeCursoredTile.tintMode;
     }
     
     #endregion
@@ -104,6 +105,7 @@ public class Board : MonoBehaviour
 
     public bool IsPieceOnTile(int pos)
     {
-        return _tiles[pos].isOccupied;
+        // return _tiles[pos].isOccupied;
+        return false;
     }
 }

@@ -6,8 +6,8 @@ using UnityEngine;
 
 public class MovableTiles
 {
-    public List<int> MovableTile = new();
-    public List<int> KillableTile = new();
+    public readonly List<int> MovableTile = new();
+    public readonly List<int> KillableTile = new();
     
     public void Add(MovableTiles other)
     {
@@ -43,19 +43,21 @@ public abstract class Piece : MonoBehaviour
 
     private bool _isInBoard;
     private Vector2Int _draggingPosition;
-    
+
     private void OnMouseDown()
     {
         if (Camera.main is null) return;
 
-        Debug.Log("Mousedown");
         if (isDragging) return;
         isDragging = false;
+        
+        // onSelected
+        movabletiles = GetMovableTilesCode();
 
         _originalPosition = transform.position;
         _mouseClickPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         
-        _board.CheckAvailableTiles(this);   // check available tiles and tint its color
+        _board.TintMovableTiles(this);   // check available tiles and tint its color
     }
 
     private void OnMouseDrag()
@@ -68,7 +70,7 @@ public abstract class Piece : MonoBehaviour
         if (!isDragging && Vector2.Distance(mousePosition, _mouseClickPosition) < 0.1f) return;
 
         
-        // Dragging
+        // on Dragging
         isDragging = true;
         transform.position = mousePosition;
         
@@ -91,15 +93,17 @@ public abstract class Piece : MonoBehaviour
         Debug.Log("mouseUp");
         if (isDragging)
         {
-            DragMode();
+            onDragEnd();
         }
         else
         {
-            ClickMode();
+            onClicked();
         }
+        
+        _board.ResetCheckTilesTint();
     }
 
-    private void DragMode()
+    private void onDragEnd()
     {
         if (!_isInBoard)
         {
@@ -109,7 +113,7 @@ public abstract class Piece : MonoBehaviour
         
     }
 
-    private void ClickMode()
+    private void onClicked()
     {
         
         ResetPosition();
@@ -118,13 +122,16 @@ public abstract class Piece : MonoBehaviour
     private void ResetPosition()
     {
         transform.position = _originalPosition;
-        _board.ResetCheckTiles();
+        isDragging = false;
+        _board.ResetCheckTilesTint();
     }
     
     #endregion
 
     #region MovementCalculation
 
+    public MovableTiles movabletiles;
+    
     public MovableTiles HorizontalMovement()
     {
         var movableTiles = new MovableTiles();
@@ -152,13 +159,13 @@ public abstract class Piece : MonoBehaviour
             // board border check
             if (currentX + x > 8) break;
             // blocking piece check
-            if (_board.IsPieceOnTile(currentY * 10 + (currentX - x)))
+            if (_board.IsPieceOnTile(currentY * 10 + (currentX + x)))
             {
-                movableTiles.KillableTile.Add(currentY * 10 + (currentX - x));
+                movableTiles.KillableTile.Add(currentY * 10 + (currentX + x));
                 break;
             }
             
-            movableTiles.MovableTile.Add(currentY * 10 + (currentX - x));
+            movableTiles.MovableTile.Add(currentY * 10 + (currentX + x));
         }
 
         return movableTiles;
