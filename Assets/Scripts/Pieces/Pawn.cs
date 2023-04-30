@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class Pawn : Piece
 {
@@ -23,7 +24,10 @@ public class Pawn : Piece
                 if (!Board.GetPiece(pos + 10))
                     movableTiles.AddMovable(pos + 10);
                 if (isFirstMove && !Board.GetPiece(pos + 20))
+                {
                     movableTiles.AddMovable(pos + 20);
+                    
+                }
                 break;
             }
             case Team.Black:
@@ -36,7 +40,10 @@ public class Pawn : Piece
                 if (!Board.GetPiece(pos - 10))
                     movableTiles.AddMovable(pos - 10);
                 if (isFirstMove && !Board.GetPiece(pos - 20))
+                {
                     movableTiles.AddMovable(pos - 20);
+                    
+                }
                 break;
             }
             case Team.Unknown:
@@ -53,8 +60,12 @@ public class Pawn : Piece
         
     }
     
-    public void Promotion()
+    public void CheckPromotion()
     {
-        
+        if (Team == Team.White && Board.GetPosFromVec2(transform.position) / 10 == 8 ||
+            Team == Team.Black && Board.GetPosFromVec2(transform.position) / 10 == 1)
+        {
+            Board.Promotion(this);
+        }
     }
 }

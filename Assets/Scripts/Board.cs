@@ -221,6 +221,13 @@ public class Board : MonoBehaviour
         toTile.pieceOnTile = piece;
 
         piece.isFirstMove = false;
+
+        if (piece is Pawn pawn)
+        {
+            
+            pawn.CheckPromotion();
+        }
+        
     }
 
     public void KillPiece(Piece fromPiece, Piece toPiece)
@@ -230,6 +237,13 @@ public class Board : MonoBehaviour
         MovePiece(fromPiece, toPieceTile);
     }
 
+    public void Promotion(Pawn pawn)
+    {
+        var tile = pawn.currentTile;
+        RemovePiece(pawn);
+        AddPiece<Queen>(tile, pawn.Team);
+    }
+    
     #endregion
 
     #region Transformer
