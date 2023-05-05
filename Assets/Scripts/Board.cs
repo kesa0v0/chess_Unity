@@ -244,6 +244,14 @@ public class Board : MonoBehaviour
         AddPiece<Queen>(tile, pawn.Team);
     }
     
+    public List<Pawn> enPassantPawns = new List<Pawn>();
+    public void EnPassant(Pawn pawn)
+    {
+        var tile = pawn.currentTile;
+        RemovePiece(pawn);
+        AddPiece<Pawn>(tile, pawn.Team);
+    }
+    
     #endregion
 
     #region Transformer

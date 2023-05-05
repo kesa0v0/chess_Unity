@@ -9,6 +9,9 @@ public class MovableTiles
     public List<int> MovableTile = new();
     public List<int> KillableTile = new();
     
+    public int EnPassantTile;
+    public int CastlingTile;
+    
     // TODO: Event Special Movement (Castling, En Passant, Promotion)
 
     public void Add(MovableTiles other)
