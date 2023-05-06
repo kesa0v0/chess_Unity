@@ -122,6 +122,12 @@ public class Board : MonoBehaviour
             _tiles[killableTile].tintMode = TintMode.Killable;
             _tiles[killableTile].TintUpdate();
         }
+
+        if (movableTilesCodes.EnPassantTile != 0)
+        {
+            _tiles[movableTilesCodes.EnPassantTile].tintMode = TintMode.Available;
+            _tiles[movableTilesCodes.EnPassantTile].TintUpdate();
+        }
     }
     
     public void ResetCheckTilesTint()
@@ -224,7 +230,6 @@ public class Board : MonoBehaviour
 
         if (piece is Pawn pawn)
         {
-            
             pawn.CheckPromotion();
         }
         
@@ -247,9 +252,7 @@ public class Board : MonoBehaviour
     public List<Pawn> enPassantPawns = new List<Pawn>();
     public void EnPassant(Pawn pawn)
     {
-        var tile = pawn.currentTile;
-        RemovePiece(pawn);
-        AddPiece<Pawn>(tile, pawn.Team);
+        
     }
     
     #endregion

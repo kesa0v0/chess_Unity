@@ -25,8 +25,8 @@ public class Pawn : Piece
                     movableTiles.AddMovable(pos + 10);
                 if (isFirstMove && !Board.GetPiece(pos + 20))
                 {
-                    movableTiles.AddMovable(pos + 20);
-                    
+                    movableTiles.EnPassantTile = pos + 20;
+                    Board.enPassantPawns.Add(this);
                 }
                 break;
             }
@@ -41,8 +41,8 @@ public class Pawn : Piece
                     movableTiles.AddMovable(pos - 10);
                 if (isFirstMove && !Board.GetPiece(pos - 20))
                 {
-                    movableTiles.AddMovable(pos - 20);
-                    
+                    movableTiles.EnPassantTile = pos - 20;
+                    Board.enPassantPawns.Add(this);
                 }
                 break;
             }

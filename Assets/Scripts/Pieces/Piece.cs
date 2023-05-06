@@ -29,6 +29,7 @@ public class MovableTiles
     {
         KillableTile.Add(tile);
     }
+    
 }
 
 [Serializable]
@@ -150,15 +151,22 @@ public abstract class Piece : MonoBehaviour
             return;
         }
         
-        // Check is Movable/Killable tile
+        // Check is Movable tile
         if (movabletiles.MovableTile.Contains(currentPos))
         {
             Board.MovePiece(this, Board.GetTileFromPos(currentPos));
             Board.TurnOver();
         }
+        // Check is Killable tile
         else if (movabletiles.KillableTile.Contains(currentPos))
         {
             Board.KillPiece(this, Board.GetPiece(currentPos));
+            Board.TurnOver();
+        }
+        // Check is Enpassant tile
+        else if (movabletiles.EnPassantTile == currentPos)
+        {
+            Board.EnPassant(this, Board.GetPiece(currentPos));
             Board.TurnOver();
         }
         else
