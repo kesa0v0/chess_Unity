@@ -53,6 +53,8 @@ public class Board : MonoBehaviour
         // DEBUG
         // Set Pieces
         InitPieceSet();
+        _whitePieces.ForEach(piece => piece.UpdateMovableTilesCode());
+        _blackPieces.ForEach(piece => piece.UpdateMovableTilesCode());
     }
 
     private void InitPieceSet()
@@ -87,7 +89,7 @@ public class Board : MonoBehaviour
     {
         return piece != null && piece.Team == currentTurn;
     }
-    
+
     public void TurnOver()
     {
         switch (currentTurn)
@@ -105,8 +107,11 @@ public class Board : MonoBehaviour
                 Debug.LogError("Turn is Unknown State.");
                 break;
         }
+        
+        _whitePieces.ForEach(piece => piece.UpdateMovableTilesCode());
+        _blackPieces.ForEach(piece => piece.UpdateMovableTilesCode());
     }
-    
+
     #region TileTintRelated
     
     public void TintMovableTiles(Piece piece)
@@ -279,7 +284,7 @@ public class Board : MonoBehaviour
 
     public Piece GetPiece(int pos)
     {
-        return _tiles[pos].pieceOnTile;
+        return _tiles.TryGetValue(pos, out var tile)? tile.pieceOnTile : null;
     }
 
     public Piece GetPiece(Tile tile)
@@ -333,7 +338,7 @@ public class Board : MonoBehaviour
                 
                 default:
                 {
-                    var movable = piece.GetMovableTilesCode();
+                    var movable = piece.movabletiles;
                     if (movable.MovableTile.Contains(tile.GetPosition()))
                     {
                         return true;
@@ -351,6 +356,6 @@ public class Board : MonoBehaviour
 
     public void RaiseCheckMate()
     {
-        throw new System.NotImplementedException();
+        // throw new System.NotImplementedException();
     }
 }

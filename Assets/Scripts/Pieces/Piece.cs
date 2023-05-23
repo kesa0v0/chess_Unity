@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 [Serializable]
 public class MovableTiles
@@ -54,14 +53,22 @@ public abstract class Piece : MonoBehaviour
     
     public bool isFirstMove = true;
 
+    public MovableTiles movabletiles;
+    
+
     
     // Start is called before the first frame update
-    protected void Start()
+    protected void Awake()
     {
         Board = transform.parent.GetComponent<Board>();
     }
 
-    public abstract MovableTiles GetMovableTilesCode();
+    protected abstract MovableTiles GetMovableTilesCode();
+
+    public void UpdateMovableTilesCode()
+    {
+        movabletiles = GetMovableTilesCode();
+    }
 
     #region MouseActions
     [Header("Mouse Actions")]
@@ -83,7 +90,7 @@ public abstract class Piece : MonoBehaviour
         isDragging = false;
 
         // onSelected
-        movabletiles = GetMovableTilesCode();
+        // movabletiles = GetMovableTilesCode();
 
         _originalPosition = transform.position;
         _mouseClickPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -163,12 +170,12 @@ public abstract class Piece : MonoBehaviour
             Board.KillPiece(this, Board.GetPiece(currentPos));
             Board.TurnOver();
         }
-        // Check is Enpassant tile
-        else if (movabletiles.EnPassantTile == currentPos)
-        {
-            Board.EnPassant(this, Board.GetPiece(currentPos));
-            Board.TurnOver();
-        }
+        // // Check is Enpassant tile
+        // else if (movabletiles.EnPassantTile == currentPos)
+        // {
+        //     // Board.EnPassant(this, Board.GetPiece(currentPos));
+        //     Board.TurnOver();
+        // }
         else
         {
             ResetPosition();
@@ -191,8 +198,6 @@ public abstract class Piece : MonoBehaviour
     #endregion
 
     #region MovementCalculation
-
-    public MovableTiles movabletiles;
     
     public MovableTiles HorizontalMovement()
     {

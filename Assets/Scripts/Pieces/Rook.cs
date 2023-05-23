@@ -1,6 +1,6 @@
 public class Rook : Piece
 {
-    public override MovableTiles GetMovableTilesCode()
+    protected override MovableTiles GetMovableTilesCode()
     {
         var movableTiles = new MovableTiles();
         

@@ -3,7 +3,7 @@ using System.Linq;
 
 public class Knight : Piece
 {
-    public override MovableTiles GetMovableTilesCode()
+    protected override MovableTiles GetMovableTilesCode()
     {
         var movableTiles = new MovableTiles();
         

@@ -21,7 +21,7 @@ public class Tile : MonoBehaviour
     public Piece pieceOnTile;
     public TintMode tintMode = TintMode.None;
 
-    private void Start()
+    private void Awake()
     {
         _board = transform.parent.GetComponent<Board>();
     }

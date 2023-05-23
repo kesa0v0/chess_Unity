@@ -4,7 +4,7 @@ using UnityEngine.Serialization;
 
 public class Pawn : Piece
 {
-    public override MovableTiles GetMovableTilesCode()
+    protected override MovableTiles GetMovableTilesCode()
     {
         // TileCode: YX (Y: Column, X: Row)
         
@@ -32,9 +32,9 @@ public class Pawn : Piece
             }
             case Team.Black:
             {
-                if (Board.GetPiece(pos - 11) && Board.GetPiece(pos - 11).Team != Team)
+                if (Board.GetPiece(pos - 11) && Board.GetPiece(pos - 11)?.Team != Team)
                     movableTiles.AddKillable(pos - 11);
-                if (Board.GetPiece(pos - 9) && Board.GetPiece(pos - 9).Team != Team)
+                if (Board.GetPiece(pos - 9) && Board.GetPiece(pos - 9)?.Team != Team)
                     movableTiles.AddKillable(pos - 9);
                 
                 if (!Board.GetPiece(pos - 10))
