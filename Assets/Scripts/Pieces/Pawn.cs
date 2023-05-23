@@ -62,8 +62,8 @@ public class Pawn : Piece
     
     public void CheckPromotion()
     {
-        if (Team == Team.White && Board.GetPosFromVec2(transform.position) / 10 == 8 ||
-            Team == Team.Black && Board.GetPosFromVec2(transform.position) / 10 == 1)
+        if (Team == Team.White && Board.GetPosFromVec2(transform.position) / 10 == 7 ||
+            Team == Team.Black && Board.GetPosFromVec2(transform.position) / 10 == 0)
         {
             Board.Promotion(this);
         }
