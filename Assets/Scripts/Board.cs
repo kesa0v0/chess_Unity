@@ -22,6 +22,8 @@ public class Board : MonoBehaviour
     [SerializeField] private List<Piece> piecePrefabs;
     private readonly List<Piece> _whitePieces = new();
     private readonly List<Piece> _blackPieces = new();
+    
+    public Dictionary<int, Pawn> EnPassantPawns = new();
 
     // Start is called before the first frame update
     private void Start()
@@ -52,7 +54,11 @@ public class Board : MonoBehaviour
         
         // DEBUG
         // Set Pieces
-        InitPieceSet();
+        // InitPieceSet();
+        AddPiece<Pawn>(GetTileFromPos(11), Team.White);
+        AddPiece<Queen>(GetTileFromPos(43), Team.Black);
+        
+        
         _whitePieces.ForEach(piece => piece.UpdateMovableTilesCode());
         _blackPieces.ForEach(piece => piece.UpdateMovableTilesCode());
     }
@@ -128,10 +134,10 @@ public class Board : MonoBehaviour
             _tiles[killableTile].TintUpdate();
         }
 
-        if (movableTilesCodes.EnPassantTile != 0)
+        if (movableTilesCodes.EnPassantMoveTile != 0)
         {
-            _tiles[movableTilesCodes.EnPassantTile].tintMode = TintMode.Available;
-            _tiles[movableTilesCodes.EnPassantTile].TintUpdate();
+            _tiles[movableTilesCodes.EnPassantMoveTile].tintMode = TintMode.Available;
+            _tiles[movableTilesCodes.EnPassantMoveTile].TintUpdate();
         }
     }
     
@@ -247,19 +253,21 @@ public class Board : MonoBehaviour
         MovePiece(fromPiece, toPieceTile);
     }
 
+    public void EnPassant(Piece fromPiece, int toTile)
+    {
+        RemovePiece(EnPassantPawns[toTile]);
+        EnPassantPawns.Remove(toTile);
+        MovePiece(fromPiece, GetTileFromPos(toTile));
+    }
+
     public void Promotion(Pawn pawn)
     {
         var tile = pawn.currentTile;
         RemovePiece(pawn);
         AddPiece<Queen>(tile, pawn.Team);
     }
-    
-    public List<Pawn> enPassantPawns = new List<Pawn>();
-    public void EnPassant(Pawn pawn)
-    {
-        
-    }
-    
+
+
     #endregion
 
     #region Transformer
@@ -290,6 +298,19 @@ public class Board : MonoBehaviour
     public Piece GetPiece(Tile tile)
     {
         return tile.pieceOnTile;
+    }
+
+    public TileKind GetKindOfTile(Piece piece, int pos)
+    {
+        if (!GetPiece(pos) && EnPassantPawns.ContainsKey(pos))
+            return TileKind.EnPassant;
+        if (!GetPiece(pos))
+            return TileKind.Movable;
+        if (GetPiece(pos) && GetPiece(pos).Team != piece.Team)
+            return TileKind.Killable;
+        if (GetPiece(pos) && GetPiece(pos).Team == piece.Team)
+            return TileKind.Obstacle;
+        return TileKind.None;
     }
 
     public IEnumerable<Piece> GetPieces<T>()

@@ -10,6 +10,14 @@ public enum TintMode  // MoveMode + TintMode
     Selected,
     None
 }
+public enum TileKind
+{
+    Movable,
+    Killable,
+    Obstacle,
+    EnPassant,
+    None
+}
 
 public class Tile : MonoBehaviour
 {

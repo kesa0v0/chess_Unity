@@ -15,11 +15,11 @@ public class Knight : Piece
 
         foreach (var p in knightMove.Where(p => p % 10 >= 0 && p % 10 <= 7 && p / 10 >= 0 && p / 10 <= 7))
         {
-            if (!Board.GetPiece(p)) // if there is empty tile
+            if (Board.GetKindOfTile(this, p) is TileKind.Movable) // if there is empty tile
             {
                 movableTiles.AddMovable(p);
             }
-            else if (Board.GetPiece(p) && Board.GetPiece(p).Team != Team) // if there is a enemy piece
+            else if (Board.GetKindOfTile(this, p) is TileKind.Killable or TileKind.EnPassant) // if there is a enemy piece
             {
                 movableTiles.AddKillable(p);
             }

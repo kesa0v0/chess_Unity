@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 [Serializable]
 public class MovableTiles
 {
@@ -9,6 +10,7 @@ public class MovableTiles
     public List<int> KillableTile = new();
     
     public int EnPassantTile;
+    public int EnPassantMoveTile;
     public int CastlingTile;
     
     // TODO: Event Special Movement (Castling, En Passant, Promotion)
@@ -164,18 +166,25 @@ public abstract class Piece : MonoBehaviour
             Board.MovePiece(this, Board.GetTileFromPos(currentPos));
             Board.TurnOver();
         }
+        // Check is EnPassant tile
         // Check is Killable tile
         else if (movabletiles.KillableTile.Contains(currentPos))
         {
-            Board.KillPiece(this, Board.GetPiece(currentPos));
+            if (Board.EnPassantPawns.ContainsKey(currentPos))
+                Board.EnPassant(this, currentPos);
+            else
+                Board.KillPiece(this, Board.GetPiece(currentPos));
             Board.TurnOver();
         }
-        // // Check is Enpassant tile
-        // else if (movabletiles.EnPassantTile == currentPos)
-        // {
-        //     // Board.EnPassant(this, Board.GetPiece(currentPos));
-        //     Board.TurnOver();
-        // }
+        // Check is Pawn's Double Move tile
+        else if (this is Pawn && movabletiles.EnPassantMoveTile == currentPos)
+        {
+            var pawn = this as Pawn;
+            Board.EnPassantPawns.Add(movabletiles.EnPassantTile, pawn);
+            Board.MovePiece(this, Board.GetTileFromPos(currentPos));
+            if (pawn != null) pawn.isEnPassantTarget = true;
+            Board.TurnOver();
+        }
         else
         {
             ResetPosition();
@@ -184,7 +193,6 @@ public abstract class Piece : MonoBehaviour
 
     private void OnClicked()
     {
-        
         transform.position = _originalPosition;
     }
 
@@ -213,9 +221,16 @@ public abstract class Piece : MonoBehaviour
             if (currentX - x < 0) break;
             // blocking piece check
             var pos = currentY * 10 + (currentX - x);
-            if (Board.GetPiece(pos))
+            var tileCheck = Board.GetKindOfTile(this, pos);
+            if (tileCheck is TileKind.Obstacle) break;
+            if (tileCheck is TileKind.EnPassant)
             {
-                if (Board.GetPiece(pos).Team != Team) movableTiles.KillableTile.Add(pos);
+                movableTiles.KillableTile.Add(pos);
+                continue;
+            }
+            if (tileCheck is TileKind.Killable)
+            {
+                movableTiles.KillableTile.Add(pos);
                 break;
             }
             
@@ -228,9 +243,15 @@ public abstract class Piece : MonoBehaviour
             if (currentX + x > 7) break;
             // blocking piece check
             var pos = currentY * 10 + (currentX + x);
-            if (Board.GetPiece(pos))
+            var tileCheck = Board.GetKindOfTile(this, pos);
+            if (tileCheck is TileKind.Obstacle) break;
+            if (tileCheck is TileKind.EnPassant) {
+                movableTiles.KillableTile.Add(pos);
+                continue;
+            }
+            if (tileCheck is TileKind.Killable)
             {
-                if (Board.GetPiece(pos).Team != Team) movableTiles.KillableTile.Add(pos);
+                movableTiles.KillableTile.Add(pos);
                 break;
             }
             
@@ -254,9 +275,15 @@ public abstract class Piece : MonoBehaviour
             if (currentY + y > 7) break;
             // blocking piece check
             var pos = (currentY + y) * 10 + currentX;
-            if (Board.GetPiece(pos))
+            var tileCheck = Board.GetKindOfTile(this, pos);
+            if (tileCheck is TileKind.Obstacle) break;
+            if (tileCheck is TileKind.EnPassant) {
+                movableTiles.KillableTile.Add(pos);
+                continue;
+            }
+            if (tileCheck is TileKind.Killable)
             {
-                if (Board.GetPiece(pos).Team != Team) movableTiles.KillableTile.Add(pos);
+                movableTiles.KillableTile.Add(pos);
                 break;
             }
             
@@ -269,9 +296,15 @@ public abstract class Piece : MonoBehaviour
             if (currentY - y < 0) break;
             // blocking piece check
             var pos = (currentY - y) * 10 + currentX;
-            if (Board.GetPiece(pos))
+            var tileCheck = Board.GetKindOfTile(this, pos);
+            if (tileCheck is TileKind.Obstacle) break;
+            if (tileCheck is TileKind.EnPassant) {
+                movableTiles.KillableTile.Add(pos);
+                continue;
+            }
+            if (tileCheck is TileKind.Killable)
             {
-                if (Board.GetPiece(pos).Team != Team) movableTiles.KillableTile.Add(pos);
+                movableTiles.KillableTile.Add(pos);
                 break;
             }
             
@@ -296,9 +329,15 @@ public abstract class Piece : MonoBehaviour
             if (currentX - i < 0 || currentY + i > 7) break;
             // blocking piece check
             var pos = (currentY + i) * 10 + currentX - i;
-            if (Board.GetPiece(pos))
+            var tileCheck = Board.GetKindOfTile(this, pos);
+            if (tileCheck is TileKind.Obstacle) break;
+            if (tileCheck is TileKind.EnPassant) {
+                movableTiles.KillableTile.Add(pos);
+                continue;
+            }
+            if (tileCheck is TileKind.Killable)
             {
-                if (Board.GetPiece(pos).Team != Team) movableTiles.KillableTile.Add(pos);
+                movableTiles.KillableTile.Add(pos);
                 break;
             }
             
@@ -311,9 +350,15 @@ public abstract class Piece : MonoBehaviour
             if (currentX - i < 0 || currentY - i < 0) break;
             // blocking piece check
             var pos = (currentY - i) * 10 + currentX - i;
-            if (Board.GetPiece(pos))
+            var tileCheck = Board.GetKindOfTile(this, pos);
+            if (tileCheck is TileKind.Obstacle) break;
+            if (tileCheck is TileKind.EnPassant) {
+                movableTiles.KillableTile.Add(pos);
+                continue;
+            }
+            if (tileCheck is TileKind.Killable)
             {
-                if (Board.GetPiece(pos).Team != Team) movableTiles.KillableTile.Add(pos);
+                movableTiles.KillableTile.Add(pos);
                 break;
             }
             
@@ -326,9 +371,15 @@ public abstract class Piece : MonoBehaviour
             if (currentX + i > 7 || currentY + i > 7) break;
             // blocking piece check
             var pos = (currentY + i) * 10 + currentX + i;
-            if (Board.GetPiece(pos))
+            var tileCheck = Board.GetKindOfTile(this, pos);
+            if (tileCheck is TileKind.Obstacle) break;
+            if (tileCheck is TileKind.EnPassant) {
+                movableTiles.KillableTile.Add(pos);
+                continue;
+            }
+            if (tileCheck is TileKind.Killable)
             {
-                if (Board.GetPiece(pos).Team != Team) movableTiles.KillableTile.Add(pos);
+                movableTiles.KillableTile.Add(pos);
                 break;
             }
             
@@ -341,9 +392,15 @@ public abstract class Piece : MonoBehaviour
             if (currentX + i > 7 || currentY - i < 0) break;
             // blocking piece check
             var pos = (currentY - i) * 10 + currentX + i;
-            if (Board.GetPiece(pos))
+            var tileCheck = Board.GetKindOfTile(this, pos);
+            if (tileCheck is TileKind.Obstacle) break;
+            if (tileCheck is TileKind.EnPassant) {
+                movableTiles.KillableTile.Add(pos);
+                continue;
+            }
+            if (tileCheck is TileKind.Killable)
             {
-                if (Board.GetPiece(pos).Team != Team) movableTiles.KillableTile.Add(pos);
+                movableTiles.KillableTile.Add(pos);
                 break;
             }
             
