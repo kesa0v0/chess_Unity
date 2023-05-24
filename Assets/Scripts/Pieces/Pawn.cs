@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [Serializable]
@@ -15,10 +16,10 @@ public class Pawn : Piece
 
         var pos = Board.GetPosFromVec2(transform.position);
         
-        if (isEnPassantTarget && Board.CheckTurn(this))
+        if (isEnPassantTarget && Board.EnPassantPawns.ContainsKey(pos + (Team == Team.White ? -10 : 10)))
         {
             isEnPassantTarget = false;
-            Board.EnPassantPawns.Remove(pos);
+            Board.EnPassantPawns.Remove(pos + (Team == Team.White ? -10 : 10));
         }
 
         switch (Team)
@@ -80,10 +81,9 @@ public class Pawn : Piece
         
         // Check is Pawn's Double Move tile
         if (movabletiles.EnPassantMoveTile != currentPos) return;
-        var pawn = this as Pawn;
-        Board.EnPassantPawns.Add(movabletiles.EnPassantTile, pawn);
+        Board.TempEnPassantPawns.Add(movabletiles.EnPassantTile, this);
         Board.MovePiece(this, Board.GetTileFromPos(currentPos));
-        if (pawn != null) pawn.isEnPassantTarget = true;
+        isEnPassantTarget = true;
         Board.TurnOver();
     }
 }

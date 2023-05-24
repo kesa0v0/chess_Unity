@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [System.Serializable]
@@ -57,6 +58,7 @@ public class Board : MonoBehaviour
     private readonly List<Piece> _blackPieces = new();
     
     public SerializableDictionary<int, Pawn> EnPassantPawns = new();
+    public SerializableDictionary<int, Pawn> TempEnPassantPawns = new();
 
     // Start is called before the first frame update
     private void Start()
@@ -135,6 +137,8 @@ public class Board : MonoBehaviour
                 turnIndicatorSpriteRenderer.color = Color.black;
         
                 _whitePieces.ForEach(piece => piece.UpdateMovableTilesCode());
+                EnPassantPawns.AddRange(TempEnPassantPawns);
+                TempEnPassantPawns.Clear();
                 _blackPieces.ForEach(piece => piece.UpdateMovableTilesCode());
                 break;
             case Team.Black:
@@ -142,6 +146,8 @@ public class Board : MonoBehaviour
                 turnIndicatorSpriteRenderer.color = Color.white;
                 
                 _blackPieces.ForEach(piece => piece.UpdateMovableTilesCode());
+                EnPassantPawns.AddRange(TempEnPassantPawns);
+                TempEnPassantPawns.Clear();
                 _whitePieces.ForEach(piece => piece.UpdateMovableTilesCode());
                 break;
             case Team.Unknown:
