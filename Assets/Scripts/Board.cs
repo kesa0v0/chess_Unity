@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class Board : MonoBehaviour
 {
@@ -23,7 +22,7 @@ public class Board : MonoBehaviour
     private readonly List<Piece> _whitePieces = new();
     private readonly List<Piece> _blackPieces = new();
     
-    public Dictionary<int, Pawn> EnPassantPawns = new();
+    public readonly Dictionary<int, Pawn> EnPassantPawns = new();
 
     // Start is called before the first frame update
     private void Start()
@@ -54,11 +53,8 @@ public class Board : MonoBehaviour
         
         // DEBUG
         // Set Pieces
-        // InitPieceSet();
-        AddPiece<Pawn>(GetTileFromPos(11), Team.White);
-        AddPiece<Queen>(GetTileFromPos(43), Team.Black);
-        
-        
+        InitPieceSet();
+
         _whitePieces.ForEach(piece => piece.UpdateMovableTilesCode());
         _blackPieces.ForEach(piece => piece.UpdateMovableTilesCode());
     }
@@ -103,19 +99,22 @@ public class Board : MonoBehaviour
             case Team.White:
                 currentTurn = Team.Black;
                 turnIndicatorSpriteRenderer.color = Color.black;
+        
+                _whitePieces.ForEach(piece => piece.UpdateMovableTilesCode());
+                _blackPieces.ForEach(piece => piece.UpdateMovableTilesCode());
                 break;
             case Team.Black:
                 currentTurn = Team.White;
                 turnIndicatorSpriteRenderer.color = Color.white;
+                
+                _blackPieces.ForEach(piece => piece.UpdateMovableTilesCode());
+                _whitePieces.ForEach(piece => piece.UpdateMovableTilesCode());
                 break;
             case Team.Unknown:
             default:
                 Debug.LogError("Turn is Unknown State.");
                 break;
         }
-        
-        _whitePieces.ForEach(piece => piece.UpdateMovableTilesCode());
-        _blackPieces.ForEach(piece => piece.UpdateMovableTilesCode());
     }
 
     #region TileTintRelated
@@ -134,6 +133,16 @@ public class Board : MonoBehaviour
             _tiles[killableTile].TintUpdate();
         }
 
+        if (movableTilesCodes.KingSideCastling != 0)
+        {
+            _tiles[movableTilesCodes.KingSideCastling].tintMode = TintMode.Available;
+            _tiles[movableTilesCodes.KingSideCastling].TintUpdate();
+        }
+        if (movableTilesCodes.QueenSideCastling != 0)
+        {
+            _tiles[movableTilesCodes.QueenSideCastling].tintMode = TintMode.Available;
+            _tiles[movableTilesCodes.QueenSideCastling].TintUpdate();
+        }
         if (movableTilesCodes.EnPassantMoveTile != 0)
         {
             _tiles[movableTilesCodes.EnPassantMoveTile].tintMode = TintMode.Available;
@@ -267,6 +276,21 @@ public class Board : MonoBehaviour
         AddPiece<Queen>(tile, pawn.Team);
     }
 
+    public void Castling(King king, Rook targetRook, bool isQueenSide)
+    {
+        // is QueenSide Castling
+        if (isQueenSide)
+        {
+            MovePiece(king, GetTileFromPos(king.currentTile.GetPosition() - 2));
+            MovePiece(targetRook, GetTileFromPos(targetRook.currentTile.GetPosition() + 3));
+        }
+        // is KingSide Castling
+        else
+        {
+            MovePiece(king, GetTileFromPos(king.currentTile.GetPosition() + 2));
+            MovePiece(targetRook, GetTileFromPos(targetRook.currentTile.GetPosition() - 2));
+        }
+    }
 
     #endregion
 
@@ -313,11 +337,17 @@ public class Board : MonoBehaviour
         return TileKind.None;
     }
 
-    public IEnumerable<Piece> GetPieces<T>()
+    public List<Piece> GetPieces<T>(Team team = Team.Unknown) where T : Piece
     {
-        return null;    // TODO: Get kinds of Pieces
+        if (team != Team.Unknown)
+            return team == Team.White ? _whitePieces.FindAll(p => p is T) : _blackPieces.FindAll(p => p is T);
+        {
+            var pieces = _whitePieces.FindAll(p => p is T);
+            pieces.AddRange(_blackPieces.FindAll(p => p is T));
+            return pieces;
+        }
     }
-
+    
     public bool IsDangerZone(Tile tile, Team team)
     {
         var pieces = team == Team.White ? _blackPieces : _whitePieces;
@@ -327,7 +357,7 @@ public class Board : MonoBehaviour
             switch (piece)
             {
                 case King:
-                    var king = GetPosFromVec2(piece.transform.position);
+                    var king = piece.currentTile.GetPosition();
                     // King can't move to front of enemy's King
                     var checkList = new List<int>
                     {
@@ -347,7 +377,7 @@ public class Board : MonoBehaviour
                     break;
                 
                 case Pawn:
-                    var pawn = GetPosFromVec2(piece.transform.position);
+                    var pawn = piece.currentTile.GetPosition();
                     if (piece.Team == Team.White && pawn == tile.GetPosition() - 9 ||
                         piece.Team == Team.White && pawn == tile.GetPosition() - 11 ||
                         piece.Team == Team.Black && pawn == tile.GetPosition() + 9 ||
@@ -360,6 +390,8 @@ public class Board : MonoBehaviour
                 default:
                 {
                     var movable = piece.movabletiles;
+                    movable.MovableTile.ForEach(p=>Debug.Log(p));
+                    Debug.Log(tile.GetPosition());
                     if (movable.MovableTile.Contains(tile.GetPosition()))
                     {
                         return true;
@@ -377,6 +409,6 @@ public class Board : MonoBehaviour
 
     public void RaiseCheckMate()
     {
-        // throw new System.NotImplementedException();
+        Debug.Log("CheckMate");
     }
 }

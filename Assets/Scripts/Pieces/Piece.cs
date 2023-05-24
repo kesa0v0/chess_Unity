@@ -11,7 +11,9 @@ public class MovableTiles
     
     public int EnPassantTile;
     public int EnPassantMoveTile;
-    public int CastlingTile;
+
+    public int QueenSideCastling;
+    public int KingSideCastling;
     
     // TODO: Event Special Movement (Castling, En Passant, Promotion)
 
@@ -30,7 +32,6 @@ public class MovableTiles
     {
         KillableTile.Add(tile);
     }
-    
 }
 
 [Serializable]
@@ -166,28 +167,55 @@ public abstract class Piece : MonoBehaviour
             Board.MovePiece(this, Board.GetTileFromPos(currentPos));
             Board.TurnOver();
         }
-        // Check is EnPassant tile
-        // Check is Killable tile
-        else if (movabletiles.KillableTile.Contains(currentPos))
+        else switch (this)
         {
-            if (Board.EnPassantPawns.ContainsKey(currentPos))
-                Board.EnPassant(this, currentPos);
-            else
-                Board.KillPiece(this, Board.GetPiece(currentPos));
-            Board.TurnOver();
-        }
-        // Check is Pawn's Double Move tile
-        else if (this is Pawn && movabletiles.EnPassantMoveTile == currentPos)
-        {
-            var pawn = this as Pawn;
-            Board.EnPassantPawns.Add(movabletiles.EnPassantTile, pawn);
-            Board.MovePiece(this, Board.GetTileFromPos(currentPos));
-            if (pawn != null) pawn.isEnPassantTarget = true;
-            Board.TurnOver();
-        }
-        else
-        {
-            ResetPosition();
+            case King when movabletiles.QueenSideCastling != 0 && currentPos is 02 or 72:
+            {
+                if (Team == Team.White)
+                    Board.Castling(this as King, Board.GetPiece(00) as Rook, true);
+                else
+                    Board.Castling(this as King, Board.GetPiece(70) as Rook, true);
+                Board.TurnOver();
+                break;
+            }
+            case King when movabletiles.KingSideCastling != 0 && currentPos is 06 or 76:
+            {
+                if (Team == Team.White)
+                    Board.Castling(this as King, Board.GetPiece(07) as Rook, false);
+                else
+                    Board.Castling(this as King, Board.GetPiece(77) as Rook, false);
+                Board.TurnOver();
+                break;
+            }
+            // Check is Pawn's Double Move tile
+            case Pawn when movabletiles.EnPassantMoveTile == currentPos:
+            {
+                var pawn = this as Pawn;
+                Board.EnPassantPawns.Add(movabletiles.EnPassantTile, pawn);
+                Board.MovePiece(this, Board.GetTileFromPos(currentPos));
+                if (pawn != null) pawn.isEnPassantTarget = true;
+                Board.TurnOver();
+                break;
+            }
+            // Check is EnPassant tile
+            // Check is Killable tile
+            default:
+            {
+                if (movabletiles.KillableTile.Contains(currentPos))
+                {
+                    if (Board.EnPassantPawns.ContainsKey(currentPos))
+                        Board.EnPassant(this, currentPos);
+                    else
+                        Board.KillPiece(this, Board.GetPiece(currentPos));
+                    Board.TurnOver();
+                }
+                else
+                {
+                    ResetPosition();
+                }
+
+                break;
+            }
         }
     }
 
