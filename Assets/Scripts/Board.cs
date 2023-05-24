@@ -390,8 +390,6 @@ public class Board : MonoBehaviour
                 default:
                 {
                     var movable = piece.movabletiles;
-                    movable.MovableTile.ForEach(p=>Debug.Log(p));
-                    Debug.Log(tile.GetPosition());
                     if (movable.MovableTile.Contains(tile.GetPosition()))
                     {
                         return true;
