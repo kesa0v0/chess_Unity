@@ -72,4 +72,18 @@ public class Pawn : Piece
             Board.Promotion(this);
         }
     }
+
+    protected override void OnDragEnd()
+    {
+        base.OnDragEnd();
+        var currentPos = Board.GetPosFromCursor();
+        
+        // Check is Pawn's Double Move tile
+        if (movabletiles.EnPassantMoveTile != currentPos) return;
+        var pawn = this as Pawn;
+        Board.EnPassantPawns.Add(movabletiles.EnPassantTile, pawn);
+        Board.MovePiece(this, Board.GetTileFromPos(currentPos));
+        if (pawn != null) pawn.isEnPassantTarget = true;
+        Board.TurnOver();
+    }
 }

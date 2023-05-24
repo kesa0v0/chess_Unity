@@ -84,4 +84,27 @@ public class King : Piece
 
         return movableTiles;
     }
+
+    protected override void OnDragEnd()
+    {
+        base.OnDragEnd();
+        var currentPos = Board.GetPosFromCursor();
+        
+        if (movabletiles.QueenSideCastling != 0 && currentPos is 02 or 72)
+        {
+            if (Team == Team.White)
+                Board.Castling(this as King, Board.GetPiece(00) as Rook, true);
+            else
+                Board.Castling(this as King, Board.GetPiece(70) as Rook, true);
+            Board.TurnOver();
+        }
+        else if (movabletiles.KingSideCastling != 0 && currentPos is 06 or 76)
+        {
+            if (Team == Team.White)
+                Board.Castling(this as King, Board.GetPiece(07) as Rook, false);
+            else
+                Board.Castling(this as King, Board.GetPiece(77) as Rook, false);
+            Board.TurnOver();
+        }
+    }
 }

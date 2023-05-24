@@ -150,7 +150,7 @@ public abstract class Piece : MonoBehaviour
         isDragging = false;
     }
 
-    private void OnDragEnd()
+    protected virtual void OnDragEnd()
     {
         var currentPos = Board.GetPosFromCursor();
         
@@ -166,57 +166,21 @@ public abstract class Piece : MonoBehaviour
         {
             Board.MovePiece(this, Board.GetTileFromPos(currentPos));
             Board.TurnOver();
+            return;
         }
-        else switch (this)
+        // Check is EnPassant tile
+        // Check is Killable tile
+        if (movabletiles.KillableTile.Contains(currentPos))
         {
-            case King when movabletiles.QueenSideCastling != 0 && currentPos is 02 or 72:
-            {
-                if (Team == Team.White)
-                    Board.Castling(this as King, Board.GetPiece(00) as Rook, true);
-                else
-                    Board.Castling(this as King, Board.GetPiece(70) as Rook, true);
-                Board.TurnOver();
-                break;
-            }
-            case King when movabletiles.KingSideCastling != 0 && currentPos is 06 or 76:
-            {
-                if (Team == Team.White)
-                    Board.Castling(this as King, Board.GetPiece(07) as Rook, false);
-                else
-                    Board.Castling(this as King, Board.GetPiece(77) as Rook, false);
-                Board.TurnOver();
-                break;
-            }
-            // Check is Pawn's Double Move tile
-            case Pawn when movabletiles.EnPassantMoveTile == currentPos:
-            {
-                var pawn = this as Pawn;
-                Board.EnPassantPawns.Add(movabletiles.EnPassantTile, pawn);
-                Board.MovePiece(this, Board.GetTileFromPos(currentPos));
-                if (pawn != null) pawn.isEnPassantTarget = true;
-                Board.TurnOver();
-                break;
-            }
-            // Check is EnPassant tile
-            // Check is Killable tile
-            default:
-            {
-                if (movabletiles.KillableTile.Contains(currentPos))
-                {
-                    if (Board.EnPassantPawns.ContainsKey(currentPos))
-                        Board.EnPassant(this, currentPos);
-                    else
-                        Board.KillPiece(this, Board.GetPiece(currentPos));
-                    Board.TurnOver();
-                }
-                else
-                {
-                    ResetPosition();
-                }
-
-                break;
-            }
+            if (Board.EnPassantPawns.ContainsKey(currentPos))
+                Board.EnPassant(this, currentPos);
+            else
+                Board.KillPiece(this, Board.GetPiece(currentPos));
+            Board.TurnOver();
+            return;
         }
+        
+        ResetPosition();
     }
 
     private void OnClicked()
