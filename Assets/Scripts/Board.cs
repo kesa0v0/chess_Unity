@@ -28,6 +28,9 @@ public class Board : MonoBehaviour
     public readonly Dictionary<int, Pawn> EnPassantPawns = new();
     public readonly Dictionary<int, Pawn> TempEnPassantPawns = new();
 
+    public bool isWhiteChecked;
+    public bool isBlackChecked;
+
     // Start is called before the first frame update
     private void Start()
     {
@@ -108,6 +111,11 @@ public class Board : MonoBehaviour
                 EnPassantPawns.AddRange(TempEnPassantPawns);
                 TempEnPassantPawns.Clear();
                 _blackPieces.ForEach(piece => piece.UpdateMovableTilesCode());
+                
+                isWhiteChecked = IsDangerZone(GetPieces<King>(Team.White)[0].currentTile, Team.White);
+                whiteCheckIndicator.gameObject.SetActive(isWhiteChecked);
+                isBlackChecked = IsDangerZone(GetPieces<King>(Team.Black)[0].currentTile, Team.Black);
+                blackCheckIndicator.gameObject.SetActive(isBlackChecked);
                 break;
             case Team.Black:
                 currentTurn = Team.White;
@@ -117,6 +125,11 @@ public class Board : MonoBehaviour
                 EnPassantPawns.AddRange(TempEnPassantPawns);
                 TempEnPassantPawns.Clear();
                 _whitePieces.ForEach(piece => piece.UpdateMovableTilesCode());
+                
+                isWhiteChecked = IsDangerZone(GetPieces<King>(Team.White)[0].currentTile, Team.White);
+                whiteCheckIndicator.gameObject.SetActive(isWhiteChecked);
+                isBlackChecked = IsDangerZone(GetPieces<King>(Team.Black)[0].currentTile, Team.Black);
+                blackCheckIndicator.gameObject.SetActive(isBlackChecked);
                 break;
             case Team.Unknown:
             default:
@@ -398,7 +411,7 @@ public class Board : MonoBehaviour
                 default:
                 {
                     var movable = piece.movabletiles;
-                    if (movable.MovableTile.Contains(tile.GetPosition()))
+                    if (movable.MovableTile.Contains(tile.GetPosition()) || movable.KillableTile.Contains(tile.GetPosition()))
                     {
                         return true;
                     }
